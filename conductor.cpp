@@ -82,7 +82,7 @@ void Conductor::run_callbacks() {
             
         time_change_index++;
         
-        emit_signal(SNAME("bpm_changed"), next_time_change);
+        emit_signal(SNAME("time_change_reached"), next_time_change);
     }
 
     int cur_measure = int32_t(Math::floor(get_current_measure()));
@@ -285,7 +285,7 @@ void Conductor::_bind_methods() {
     ADD_SIGNAL(MethodInfo("beat_hit", PropertyInfo(Variant::INT, "beat")));
     ADD_SIGNAL(MethodInfo("step_hit", PropertyInfo(Variant::INT, "step")));
     ADD_SIGNAL(MethodInfo("measure_hit", PropertyInfo(Variant::INT, "measure")));
-    ADD_SIGNAL(MethodInfo("bpm_changed", PropertyInfo(Variant::INT, "b")));
+    ADD_SIGNAL(MethodInfo("time_change_reached", PropertyInfo(Variant::INT, "time_change")));
 }
 
 Conductor::Conductor() {
