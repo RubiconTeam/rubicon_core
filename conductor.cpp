@@ -135,10 +135,10 @@ void Conductor::reset() {
 }
 
 float Conductor::get_current_step() {
-    if (_cached_step_time == _time)
-        return _cached_step;
-    
     float time = get_time();
+    if (_cached_step_time == time)
+        return _cached_step;
+
     Ref<TimeChange> time_change = get_current_time_change();
     if (_time_changes.size() <= 1)
         return time / (60.0f / (time_change->bpm * time_change->time_signature_denominator));
@@ -149,10 +149,10 @@ float Conductor::get_current_step() {
 }
 
 float Conductor::get_current_beat() {
-    if (_cached_beat_time == _time)
+    float time = get_time();
+    if (_cached_beat_time == time)
         return _cached_beat;
     
-    float time = get_time();
     Ref<TimeChange> time_change = get_current_time_change();
     if (_time_changes.size() <= 1)
         return time / (60.0f / time_change->bpm);
@@ -163,10 +163,10 @@ float Conductor::get_current_beat() {
 }
 
 float Conductor::get_current_measure() {
-    if (_cached_measure_time == _time)
+    float time = get_time();
+    if (_cached_measure_time == time)
         return _cached_measure;
     
-    float time = get_time();
     Ref<TimeChange> time_change = get_current_time_change();
     if (_time_changes.size() <= 1)
         return time / (60.0f / (time_change->bpm / time_change->time_signature_numerator));
