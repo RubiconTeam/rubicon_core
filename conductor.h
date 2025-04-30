@@ -43,12 +43,24 @@ public:
     void set_audio_time(float p_time);
     float get_audio_time();
 
+    void set_time_changes(const TypedArray<TimeChange> &p_time_changes);
+    TypedArray<TimeChange> get_time_changes();
+
+    // Methods
+    void run_callbacks();
+
+    void play(float p_time = 0.0f);
+    void resume();
+    void pause();
+    void stop();
+
+    Ref<TimeChange> get_current_time_change();
+
+    void reset();
+
     float get_current_step();
     float get_current_beat();
     float get_current_measure();
-
-    void set_time_changes(const TypedArray<TimeChange> &p_time_changes);
-    TypedArray<TimeChange> get_time_changes();
 
     // Utility functions
     float measure_to_ms(float p_measure, float p_bpm, float p_timeSignatureNumerator) const;
@@ -65,7 +77,6 @@ protected:
     static Conductor *singleton;
 
 	static void _bind_methods();
-    void _process_internal();
 
 private:
 	double _relative_start_time = 0;
