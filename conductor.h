@@ -25,31 +25,31 @@ public:
     bool playing = false;
 
     // Getters and Setters
-    void set_time_change_index(int p_time_change_index);
-    int get_time_change_index();
+    void set_time_change_index(const int p_time_change_index);
+    int get_time_change_index() const;
 
-    void set_offset(float p_offset);
-    float get_offset();
+    void set_offset(const float p_offset);
+    float get_offset() const;
 
-    void set_speed(float p_speed);
-    float get_speed();
+    void set_speed(const float p_speed);
+    float get_speed() const;
 
-    void set_playing(float p_playing);
-    bool get_playing();
+    void set_playing(const bool p_playing);
+    bool get_playing() const;
 
-    void set_time(float p_time);
-    float get_time();
+    void set_time(const float p_time);
+    float get_time() const;
 
-    void set_audio_time(float p_time);
-    float get_audio_time();
+    void set_audio_time(const float p_time);
+    float get_audio_time() const;
 
     void set_time_changes(const TypedArray<TimeChange> &p_time_changes);
-    TypedArray<TimeChange> get_time_changes();
+    TypedArray<TimeChange> get_time_changes() const;
 
     // Methods
     void run_callbacks();
 
-    void play(float p_time = 0.0f);
+    void play(const float p_time = 0.0f);
     void resume();
     void pause();
     void stop();
@@ -63,15 +63,15 @@ public:
     float get_current_measure();
 
     // Utility functions
-    float measure_to_ms(float p_measure, float p_bpm, float p_timeSignatureNumerator) const;
+    float measure_to_ms(float p_measure, float p_bpm, float p_time_signature_numerator) const;
     float beats_to_ms(float p_beat, float p_bpm) const;
-    float steps_to_ms(float p_step, float p_bpm, float timeSignatureDenominator) const;
-    float ms_to_measures(float p_msTime, const TypedArray<TimeChange> &p_time_changes) const;
-    float measureToBeats(float p_measure, float p_timeSignatureNumerator) const;
-    float measure_to_steps(float p_measure, float p_timeSignatureNumerator, float p_timeSignatureDenominator) const;
-    float beats_to_steps(float p_beats, float p_timeSignatureDenominator) const; 
-    float beats_to_measures(float p_beats, float p_timeSignatureNumerator) const;
-    float steps_to_measures(float p_steps, float p_timeSignatureNumerator, float p_timeSignatureDenominator) const;
+    float steps_to_ms(float p_step, float p_bpm, float p_time_signature_denominator) const;
+    float measure_to_beats(float p_measure, float p_time_signature_numerator) const;
+    float measure_to_steps(float p_measure, float p_time_signature_numerator, float p_time_signature_denominator) const;
+    float beats_to_steps(float p_beats, float p_time_signature_denominator) const; 
+    float beats_to_measures(float p_beats, float p_time_signature_numerator) const;
+    float steps_to_measures(float p_steps, float p_time_signature_numerator, float p_time_signature_denominator) const;
+    float ms_to_measures(float p_ms_time, const TypedArray<TimeChange> &p_time_changes) const;
 
 protected:
     static Conductor *singleton;
