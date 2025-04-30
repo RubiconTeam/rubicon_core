@@ -1,5 +1,5 @@
-#include "rubicon_core/chart/time_change.h"
-#include "rubicon_core/conductor.h"
+#include "modules/rubicon_core/chart/time_change.h"
+#include "modules/rubicon_core/conductor.h"
 
 void TimeChange::set_time(const float p_time) {
     time = p_time;
@@ -32,5 +32,5 @@ void TimeChange::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_time"), &TimeChange::get_time);
 
     // Fields
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "time"), "set_time", "get_ime");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "time"), "set_time", "get_time");
 }

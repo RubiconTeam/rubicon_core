@@ -1,4 +1,4 @@
-#include "rubicon_core/conductor.h"
+#include "modules/rubicon_core/conductor.h"
 #include "scene/main/scene_tree.h"
 #include "core/variant/callable.h"
 #include "core/os/time.h"
@@ -55,12 +55,12 @@ float Conductor::ms_to_measures(float p_ms_time, const TypedArray<TimeChange> &p
 }
 
 void Conductor::_bind_methods() {
-    ClassDB::bind_method(D_METHOD("measures_to_ms", "p_measure", "p_bpm", "p_time_signature_numerator"), &Conductor::measure_to_ms;
+    ClassDB::bind_method(D_METHOD("measures_to_ms", "p_measure", "p_bpm", "p_time_signature_numerator"), &Conductor::measure_to_ms);
 }
 
 Conductor::Conductor() {
 	singleton = this;
-    SceneTree::get_singleton()->connect("process_frame", Callable(this, "_Process"));
+    //SceneTree::get_singleton()->connect("process_frame", Callable(this, "_Process"));
 }
 
 Conductor::~Conductor() {

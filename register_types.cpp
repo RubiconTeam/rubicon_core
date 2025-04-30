@@ -2,12 +2,12 @@
 
 #include "core/config/engine.h"
 #include "core/object/class_db.h"
-#include "rubicon_core/conductor.h"
-#include "rubicon_core/chart/time_change.h"
+#include "modules/rubicon_core/conductor.h"
+#include "modules/rubicon_core/chart/time_change.h"
 
 static Conductor *ConductorPtr;
 
-void initialize_rubicon_module(ModuleInitializationLevel p_level) {
+void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
 
@@ -24,7 +24,7 @@ void initialize_rubicon_module(ModuleInitializationLevel p_level) {
     Engine::get_singleton()->add_singleton(Engine::Singleton("Conductor", Conductor::get_singleton()));   
 }
 
-void uninitialize_rubicon_module(ModuleInitializationLevel p_level) {
+void uninitialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
 
