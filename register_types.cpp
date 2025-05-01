@@ -2,8 +2,9 @@
 
 #include "core/config/engine.h"
 #include "core/object/class_db.h"
-#include "modules/rubicon_core/conductor.h"
-#include "modules/rubicon_core/chart/time_change.h"
+#include "conductor.h"
+#include "chart/sv_change.h"
+#include "chart/time_change.h"
 
 static Conductor *ConductorPtr;
 
@@ -17,6 +18,7 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
     GDREGISTER_CLASS(Conductor);
 
 	// Rubicon.Core.Chart
+	GDREGISTER_CLASS(SvChange);
 	GDREGISTER_CLASS(TimeChange);
 
 	// Initialize singletons

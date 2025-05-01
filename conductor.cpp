@@ -1,4 +1,4 @@
-#include "modules/rubicon_core/conductor.h"
+#include "conductor.h"
 #include "scene/main/scene_tree.h"
 #include "core/variant/callable.h"
 #include "core/os/time.h"
