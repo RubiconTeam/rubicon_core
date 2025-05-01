@@ -65,6 +65,8 @@ float Conductor::get_audio_time() const {
 
 void Conductor::set_time_changes(const TypedArray<TimeChange> &p_time_changes) {
     _time_changes = p_time_changes;
+    time_change_index = 0;
+    emit_signal(SNAME("time_change_reached"), get_current_time_change());
 }
 
 TypedArray<TimeChange> Conductor::get_time_changes() const {
@@ -135,6 +137,9 @@ void Conductor::reset() {
 }
 
 float Conductor::get_current_step() {
+    if (_time_changes.is_empty())
+        return 0.0f;
+
     float time = get_time();
     if (_cached_step_time == time)
         return _cached_step;
@@ -149,6 +154,9 @@ float Conductor::get_current_step() {
 }
 
 float Conductor::get_current_beat() {
+    if (_time_changes.is_empty())
+        return 0.0f;
+
     float time = get_time();
     if (_cached_beat_time == time)
         return _cached_beat;
@@ -163,6 +171,9 @@ float Conductor::get_current_beat() {
 }
 
 float Conductor::get_current_measure() {
+    if (_time_changes.is_empty())
+        return 0.0f;
+
     float time = get_time();
     if (_cached_measure_time == time)
         return _cached_measure;
@@ -177,6 +188,9 @@ float Conductor::get_current_measure() {
 }
 
 Ref<TimeChange> Conductor::get_current_time_change() {
+    if (_time_changes.is_empty())
+        return Ref<TimeChange>();
+
     return _time_changes[time_change_index];
 }
 

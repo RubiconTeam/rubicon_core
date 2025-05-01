@@ -33,7 +33,7 @@ u_int8_t RowData::get_quant() const {
     return quant;
 }
 
-TypedArray<NoteData> RowData::get_notes(const bool p_include_ends = false) const {
+TypedArray<NoteData> RowData::get_notes(const bool p_include_ends) const {
     TypedArray<NoteData> notes = starting_notes.duplicate();
     if (!p_include_ends)
         return notes;
