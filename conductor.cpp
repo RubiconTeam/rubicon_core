@@ -194,39 +194,39 @@ Ref<TimeChange> Conductor::get_current_time_change() {
     return _time_changes[time_change_index];
 }
 
-float Conductor::measure_to_ms(float p_measure, float p_bpm, float p_time_signature_numerator) const {
+float Conductor::measure_to_ms(float p_measure, float p_bpm, float p_time_signature_numerator)  {
     return p_measure * (60000.0f / (p_bpm / p_time_signature_numerator));
 }
 
-float Conductor::beats_to_ms(float p_beat, float p_bpm) const {
+float Conductor::beats_to_ms(float p_beat, float p_bpm)  {
     return p_beat * (60000.0f / p_bpm);
 }
 
-float Conductor::steps_to_ms(float p_step, float p_bpm, float p_time_signature_denominator) const {
+float Conductor::steps_to_ms(float p_step, float p_bpm, float p_time_signature_denominator)  {
     return p_step * (60000.0f / p_bpm / p_time_signature_denominator);
 }
 
-float Conductor::measure_to_beats(float p_measure, float p_time_signature_numerator) const {
+float Conductor::measure_to_beats(float p_measure, float p_time_signature_numerator)  {
     return p_measure * p_time_signature_numerator;
 }
 
-float Conductor::measure_to_steps(float p_measure, float p_time_signature_numerator, float p_time_signature_denominator) const {
+float Conductor::measure_to_steps(float p_measure, float p_time_signature_numerator, float p_time_signature_denominator)  {
     return beats_to_steps(measure_to_beats(p_measure, p_time_signature_numerator), p_time_signature_denominator);
 }
 
-float Conductor::beats_to_steps(float p_beats, float p_time_signature_denominator) const {
+float Conductor::beats_to_steps(float p_beats, float p_time_signature_denominator)  {
     return p_beats * p_time_signature_denominator;
 }
 
-float Conductor::beats_to_measures(float p_beats, float p_time_signature_numerator) const {
+float Conductor::beats_to_measures(float p_beats, float p_time_signature_numerator)  {
     return p_beats / p_time_signature_numerator;
 }
 
-float Conductor::steps_to_measures(float p_steps,float p_time_signature_numerator, float p_time_signature_denominator) const {
+float Conductor::steps_to_measures(float p_steps,float p_time_signature_numerator, float p_time_signature_denominator)  {
     return p_steps / (p_time_signature_numerator * p_time_signature_denominator);
 }
 
-float Conductor::ms_to_measures(float p_ms_time, const TypedArray<TimeChange> &p_time_changes) const {
+float Conductor::ms_to_measures(float p_ms_time, const TypedArray<TimeChange> &p_time_changes)  {
     Ref<TimeChange> time_change = p_time_changes.back();
     for (int i = 1; i < p_time_changes.size(); i++) {
         Ref<TimeChange> cur_time_change = p_time_changes[i];
@@ -285,15 +285,15 @@ void Conductor::_bind_methods() {
     ClassDB::bind_method("get_current_measure", &Conductor::get_current_measure);
 
     // Utility functins
-    ClassDB::bind_method(D_METHOD("measures_to_ms", "measure", "bpm", "ime_signature_numerator"), &Conductor::measure_to_ms);
-    ClassDB::bind_method(D_METHOD("beats_to_ms", "beat", "bpm"), &Conductor::beats_to_ms);
-    ClassDB::bind_method(D_METHOD("steps_to_ms", "step", "bpm", "time_signature_denominator"), &Conductor::steps_to_ms);
-    ClassDB::bind_method(D_METHOD("measure_to_beats", "measure", "time_signature_numerator"), &Conductor::measure_to_beats);
-    ClassDB::bind_method(D_METHOD("measure_to_steps", "measure", "time_signature_numerator", "time_signature_denominator"), &Conductor::measure_to_steps);
-    ClassDB::bind_method(D_METHOD("beats_to_steps", "beats", "time_signature_denominator"), &Conductor::beats_to_steps);
-    ClassDB::bind_method(D_METHOD("beats_to_measures", "beats", "time_signature_numerator"), &Conductor::beats_to_measures);
-    ClassDB::bind_method(D_METHOD("steps_to_measures", "steps", "time_signature_numerator", "time_signature_denominator"), &Conductor::steps_to_measures);
-    ClassDB::bind_method(D_METHOD("ms_to_measures", "ms_time", "time_changes"), &Conductor::ms_to_measures);
+    ClassDB::bind_static_method("Conductor", D_METHOD("measures_to_ms", "measure", "bpm", "ime_signature_numerator"), &Conductor::measure_to_ms);
+    ClassDB::bind_static_method("Conductor",D_METHOD("beats_to_ms", "beat", "bpm"), &Conductor::beats_to_ms);
+    ClassDB::bind_static_method("Conductor",D_METHOD("steps_to_ms", "step", "bpm", "time_signature_denominator"), &Conductor::steps_to_ms);
+    ClassDB::bind_static_method("Conductor",D_METHOD("measure_to_beats", "measure", "time_signature_numerator"), &Conductor::measure_to_beats);
+    ClassDB::bind_static_method("Conductor",D_METHOD("measure_to_steps", "measure", "time_signature_numerator", "time_signature_denominator"), &Conductor::measure_to_steps);
+    ClassDB::bind_static_method("Conductor",D_METHOD("beats_to_steps", "beats", "time_signature_denominator"), &Conductor::beats_to_steps);
+    ClassDB::bind_static_method("Conductor",D_METHOD("beats_to_measures", "beats", "time_signature_numerator"), &Conductor::beats_to_measures);
+    ClassDB::bind_static_method("Conductor",D_METHOD("steps_to_measures", "steps", "time_signature_numerator", "time_signature_denominator"), &Conductor::steps_to_measures);
+    ClassDB::bind_static_method("Conductor",D_METHOD("ms_to_measures", "ms_time", "time_changes"), &Conductor::ms_to_measures);
 
     // Signals
     ADD_SIGNAL(MethodInfo("beat_hit", PropertyInfo(Variant::INT, "beat")));

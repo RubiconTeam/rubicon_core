@@ -38,7 +38,7 @@ void SvChange::convert_data(const TypedArray<TimeChange> &p_time_changes, const 
         }
     }
 
-    ms_time = Conductor::get_singleton()->measure_to_ms(time - time_change->time, time_change->bpm, time_change->time_signature_numerator) + time_change->ms_time;
+    ms_time = Conductor::measure_to_ms(time - time_change->time, time_change->bpm, time_change->time_signature_numerator) + time_change->ms_time;
     if (p_previous_change.is_null())
         return;
     

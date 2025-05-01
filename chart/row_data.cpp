@@ -39,7 +39,7 @@ TypedArray<NoteData> RowData::get_notes(const bool p_include_ends) const {
         return notes;
     
     notes.append_array(ending_notes);
-    notes.sort_custom(Callable(this, "sort_notes_by_lane"));
+    //notes.sort_custom(callable_mp);
 }
 
 bool RowData::sort_notes_by_lane(const Variant &a, const Variant &b) {

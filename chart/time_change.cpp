@@ -38,15 +38,15 @@ float TimeChange::get_ms_time() const {
 }
 
 float TimeChange::get_measure_value() const {
-    return Conductor::get_singleton()->measure_to_ms(1.0f, bpm, time_signature_numerator);
+    return Conductor::measure_to_ms(1.0f, bpm, time_signature_numerator);
 }
 
 float TimeChange::get_beat_value() const {
-    return Conductor::get_singleton()->beats_to_ms(1.0f, bpm);
+    return Conductor::beats_to_ms(1.0f, bpm);
 }
 
 float TimeChange::get_step_value() const {
-    return Conductor::get_singleton()->steps_to_ms(1.0f, bpm, time_signature_denominator);
+    return Conductor::steps_to_ms(1.0f, bpm, time_signature_denominator);
 }
 
 void TimeChange::_bind_methods() {
