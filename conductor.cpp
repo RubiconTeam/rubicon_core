@@ -229,6 +229,12 @@ float Conductor::measure_range_to_ms(float p_start, float p_end, const TypedArra
         if (!started && cur->time < p_start) {
             ms_result += measure_to_ms(cur->time - p_start, prev->bpm, prev->time_signature_numerator);
             started = true;
+
+            if (i == array_size - 1) {
+                ms_result += measure_to_ms(p_end - prev->time, prev->bpm, prev->time_signature_numerator);
+                break;
+            }
+
             continue;
         }
 
