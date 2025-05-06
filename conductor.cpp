@@ -206,6 +206,45 @@ float Conductor::steps_to_ms(float p_step, float p_bpm, float p_time_signature_d
     return p_step * (60000.0f / p_bpm / p_time_signature_denominator);
 }
 
+float Conductor::measure_range_to_ms(float p_start, float p_end, const TypedArray<TimeChange> &p_time_changes) {
+    ERR_FAIL_COND_MSG(p_start > p_end, "The starting point can not go above the end point.");
+    ERR_FAIL_COND_MSG(p_end < p_start, "The ending point can not go below the starting point.");
+    
+    int array_size = p_time_changes.size();
+    ERR_FAIL_COND_MSG(array_size == 0, "Time change array's size is less than 0.");
+
+    Ref<TimeChange> prev = p_time_changes[0];
+    if (array_size == 1)
+        return measure_to_ms(p_end - p_start, prev->bpm, prev->time_signature_numerator);
+
+    bool started = false;
+    bool ended = false;
+    float ms_result = 0.0f;
+    for (int i = 1; i < array_size; i++) {
+        Ref<TimeChange> cur = p_time_changes[i];
+        if (cur->time < p_start) {
+            continue;
+        }
+
+        if (!started && cur->time < p_start) {
+            ms_result += measure_to_ms(cur->time - p_start, prev->bpm, prev->time_signature_numerator);
+            started = true;
+            continue;
+        }
+
+        ended = cur->time > p_end || i == array_size - 1;
+        if (ended) {
+            ms_result += measure_to_ms(cur->time - p_end, prev->bpm, prev->time_signature_numerator);
+            break;
+        }
+        
+        ms_result += measure_to_ms(cur->time - prev->time, prev->bpm, prev->time_signature_numerator);
+        prev = cur;
+    }
+
+    return ms_result;
+}
+
 float Conductor::measure_to_beats(float p_measure, float p_time_signature_numerator)  {
     return p_measure * p_time_signature_numerator;
 }

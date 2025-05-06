@@ -66,6 +66,7 @@ public:
     static float measure_to_ms(float p_measure, float p_bpm, float p_time_signature_numerator);
     static float beats_to_ms(float p_beat, float p_bpm);
     static float steps_to_ms(float p_step, float p_bpm, float p_time_signature_denominator);
+    static float measure_range_to_ms(float p_start, float p_end, const TypedArray<TimeChange> &p_time_changes);
     static float measure_to_beats(float p_measure, float p_time_signature_numerator);
     static float measure_to_steps(float p_measure, float p_time_signature_numerator, float p_time_signature_denominator);
     static float beats_to_steps(float p_beats, float p_time_signature_denominator);
