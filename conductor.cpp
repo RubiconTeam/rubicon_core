@@ -234,7 +234,7 @@ float Conductor::measure_range_to_ms(float p_start, float p_end, const TypedArra
 
         ended = cur->time > p_end || i == array_size - 1;
         if (ended) {
-            ms_result += measure_to_ms(cur->time - p_end, prev->bpm, prev->time_signature_numerator);
+            ms_result += measure_to_ms(p_end - prev->time, prev->bpm, prev->time_signature_numerator);
             break;
         }
         
