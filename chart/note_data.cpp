@@ -1,10 +1,10 @@
 #include "note_data.h"
 
-void NoteData::set_lane(const u_int8_t p_lane) {
+void NoteData::set_lane(const uint8_t p_lane) {
     lane = p_lane;
 }
 
-u_int8_t NoteData::get_lane() const {
+uint8_t NoteData::get_lane() const {
     return lane;
 }
 
@@ -104,7 +104,7 @@ bool NoteData::sort_notes_by_lane(const Variant &a, const Variant &b) {
     return a < b;
 }
 
-bool NoteData::is_note_lane(const Variant &p_note, const u_int8_t p_lane) {
+bool NoteData::is_note_lane(const Variant &p_note, const uint8_t p_lane) {
     NoteData* casted_note = Object::cast_to<NoteData>(p_note);
     if (casted_note != nullptr)
         return casted_note->lane == p_lane;

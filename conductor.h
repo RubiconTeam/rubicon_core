@@ -82,7 +82,7 @@ protected:
 private:
 	double _relative_start_time = 0;
 	double _relative_time_offset = 0;
-	float _last_time = -1.79769e308;
+	float _last_time = 0.0f;
 	double _time = 0;
 		
 	float _cached_step;

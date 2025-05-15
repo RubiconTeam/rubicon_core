@@ -9,19 +9,19 @@ Ref<SectionData> RowData::get_section() const {
     return section;
 }
 
-void RowData::set_lane_priority(const u_int8_t p_lane_priority) {
+void RowData::set_lane_priority(const uint8_t p_lane_priority) {
     lane_priority = p_lane_priority;
 }
 
-u_int8_t RowData::get_lane_priority() const {
+uint8_t RowData::get_lane_priority() const {
     return lane_priority;
 }
 
-void RowData::set_offset(const u_int8_t p_offset) {
+void RowData::set_offset(const uint8_t p_offset) {
     offset = p_offset;
 }
 
-u_int8_t RowData::get_offset() const {
+uint8_t RowData::get_offset() const {
     return offset;
 }
 
@@ -43,7 +43,7 @@ TypedArray<NoteData> RowData::get_notes(const bool p_include_ends) const {
     return notes;
 }
 
-Ref<NoteData> RowData::get_note_at_lane(const u_int8_t p_lane, const bool p_include_ends) const {
+Ref<NoteData> RowData::get_note_at_lane(const uint8_t p_lane, const bool p_include_ends) const {
     int note_index = starting_notes.find_custom(callable_mp_static(NoteData::is_note_lane).bind(p_lane));
     if (note_index != -1) {
         return starting_notes[note_index];
@@ -119,7 +119,7 @@ void RowData::remove_note(const Ref<NoteData> p_note) {
     ending_notes.sort_custom(callable_mp_static(&NoteData::sort_notes_by_lane));
 }
 
-void RowData::remove_note_at_lane(const u_int8_t p_lane) {
+void RowData::remove_note_at_lane(const uint8_t p_lane) {
     int index = starting_notes.find_custom(callable_mp_static(NoteData::is_note_lane).bind(p_lane));
     if (index != -1)
         starting_notes.remove_at(index);
@@ -132,7 +132,7 @@ void RowData::remove_note_at_lane(const u_int8_t p_lane) {
     ending_notes.sort_custom(callable_mp_static(&NoteData::sort_notes_by_lane));
 }
 
-bool RowData::has_note_at_lane(const u_int8_t p_lane) const {
+bool RowData::has_note_at_lane(const uint8_t p_lane) const {
     bool has_note = starting_notes.any(callable_mp_static(NoteData::is_note_lane).bind(p_lane));
     if (!has_note)
         has_note = ending_notes.any(callable_mp_static(NoteData::is_note_lane).bind(p_lane));

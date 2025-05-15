@@ -22,14 +22,14 @@ class NoteData : public Resource {
     GDCLASS(NoteData, Resource);
 
 public:
-    u_int8_t lane;
+    uint8_t lane;
     StringName type;
 
     float measure_time;
     float measure_length;
 
-    void set_lane(const u_int8_t p_lane);
-    u_int8_t get_lane() const;
+    void set_lane(const uint8_t p_lane);
+    uint8_t get_lane() const;
 
     void set_type(const StringName &p_type);
     StringName get_type() const;
@@ -74,7 +74,7 @@ public:
     void convert_data(const TypedArray<NoteData> &p_time_changes, const TypedArray<SvChange> &p_sv_changes);
 
     static bool sort_notes_by_lane(const Variant &a, const Variant &b);
-    static bool is_note_lane(const Variant &p_note, const u_int8_t p_lane);
+    static bool is_note_lane(const Variant &p_note, const uint8_t p_lane);
     static bool is_note_type(const Variant &p_note, const StringName &p_type);
 };
 

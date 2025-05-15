@@ -207,11 +207,11 @@ float Conductor::steps_to_ms(float p_step, float p_bpm, float p_time_signature_d
 }
 
 float Conductor::measure_range_to_ms(float p_start, float p_end, const TypedArray<TimeChange> &p_time_changes) {
-    ERR_FAIL_COND_MSG(p_start > p_end, "The starting point can not go above the end point.");
-    ERR_FAIL_COND_MSG(p_end < p_start, "The ending point can not go below the starting point.");
+    ERR_FAIL_COND_V_MSG(p_start > p_end, 0.0f, "The starting point can not go above the end point.");
+    ERR_FAIL_COND_V_MSG(p_end < p_start, 0.0f, "The ending point can not go below the starting point.");
     
     int array_size = p_time_changes.size();
-    ERR_FAIL_COND_MSG(array_size == 0, "Time change array's size is less than 0.");
+    ERR_FAIL_COND_V_MSG(array_size == 0, 0.0f, "Time change array's size is less than 0.");
 
     Ref<TimeChange> prev = p_time_changes[0];
     if (array_size == 1)

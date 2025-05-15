@@ -7,7 +7,7 @@ class RubiChart : public Resource {
     GDCLASS(RubiChart, Resource);
 
 public:
-    enum QuantValue : u_int8_t {
+    enum QuantValue : uint8_t {
         QUANT_VALUE_4TH = 4,
         QUANT_VALUE_8TH = 8,
         QUANT_VALUE_12TH = 12,
@@ -19,7 +19,7 @@ public:
         QUANT_VALUE_192ND = 192
     };
 
-    static const u_int8_t MAX_LANE_COUNT = 32;
+    static const uint8_t MAX_LANE_COUNT = 32;
 
 protected:
     static void _bind_methods();
