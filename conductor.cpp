@@ -331,14 +331,14 @@ void Conductor::_bind_methods() {
 
     // Utility functins
     ClassDB::bind_static_method("Conductor", D_METHOD("measures_to_ms", "measure", "bpm", "ime_signature_numerator"), &Conductor::measure_to_ms);
-    ClassDB::bind_static_method("Conductor",D_METHOD("beats_to_ms", "beat", "bpm"), &Conductor::beats_to_ms);
-    ClassDB::bind_static_method("Conductor",D_METHOD("steps_to_ms", "step", "bpm", "time_signature_denominator"), &Conductor::steps_to_ms);
-    ClassDB::bind_static_method("Conductor",D_METHOD("measure_to_beats", "measure", "time_signature_numerator"), &Conductor::measure_to_beats);
-    ClassDB::bind_static_method("Conductor",D_METHOD("measure_to_steps", "measure", "time_signature_numerator", "time_signature_denominator"), &Conductor::measure_to_steps);
-    ClassDB::bind_static_method("Conductor",D_METHOD("beats_to_steps", "beats", "time_signature_denominator"), &Conductor::beats_to_steps);
-    ClassDB::bind_static_method("Conductor",D_METHOD("beats_to_measures", "beats", "time_signature_numerator"), &Conductor::beats_to_measures);
-    ClassDB::bind_static_method("Conductor",D_METHOD("steps_to_measures", "steps", "time_signature_numerator", "time_signature_denominator"), &Conductor::steps_to_measures);
-    ClassDB::bind_static_method("Conductor",D_METHOD("ms_to_measures", "ms_time", "time_changes"), &Conductor::ms_to_measures);
+    ClassDB::bind_static_method("Conductor", D_METHOD("beats_to_ms", "beat", "bpm"), &Conductor::beats_to_ms);
+    ClassDB::bind_static_method("Conductor", D_METHOD("steps_to_ms", "step", "bpm", "time_signature_denominator"), &Conductor::steps_to_ms);
+    ClassDB::bind_static_method("Conductor", D_METHOD("measure_to_beats", "measure", "time_signature_numerator"), &Conductor::measure_to_beats);
+    ClassDB::bind_static_method("Conductor", D_METHOD("measure_to_steps", "measure", "time_signature_numerator", "time_signature_denominator"), &Conductor::measure_to_steps);
+    ClassDB::bind_static_method("Conductor", D_METHOD("beats_to_steps", "beats", "time_signature_denominator"), &Conductor::beats_to_steps);
+    ClassDB::bind_static_method("Conductor", D_METHOD("beats_to_measures", "beats", "time_signature_numerator"), &Conductor::beats_to_measures);
+    ClassDB::bind_static_method("Conductor", D_METHOD("steps_to_measures", "steps", "time_signature_numerator", "time_signature_denominator"), &Conductor::steps_to_measures);
+    ClassDB::bind_static_method("Conductor", D_METHOD("ms_to_measures", "ms_time", "time_changes"), &Conductor::ms_to_measures);
 
     // Signals
     ADD_SIGNAL(MethodInfo("beat_hit", PropertyInfo(Variant::INT, "beat")));

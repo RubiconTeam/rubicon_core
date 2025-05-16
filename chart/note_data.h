@@ -8,13 +8,11 @@
 #include "core/variant/typed_array.h"
 #include "core/variant/typed_dictionary.h"
 #include "row_data.h"
+#include "time_change.h"
 #include "sv_change.h"
 
 template <typename T>
 class TypedArray;
-
-template <typename K, typename V>
-class TypedDictionary;
 
 class RowData; // Neccessary so NoteData knows that RowData is a class, at the very least.
 
@@ -71,11 +69,14 @@ public:
     void set_counts_towards_score(const bool p_value);
     bool get_counts_towards_score() const;
 
-    void convert_data(const TypedArray<NoteData> &p_time_changes, const TypedArray<SvChange> &p_sv_changes);
+    void convert_data(const TypedArray<TimeChange> &p_time_changes, const TypedArray<SvChange> &p_sv_changes);
 
-    static bool sort_notes_by_lane(const Variant &a, const Variant &b);
+    static bool compare_notes_by_lane(const Variant &p_a, const Variant &p_b);
     static bool is_note_lane(const Variant &p_note, const uint8_t p_lane);
     static bool is_note_type(const Variant &p_note, const StringName &p_type);
+
+protected:
+    static void _bind_methods();
 };
 
 #endif // NOTE_DATA_H

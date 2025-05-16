@@ -39,7 +39,7 @@ TypedArray<NoteData> RowData::get_notes(const bool p_include_ends) const {
         return notes;
     
     notes.append_array(ending_notes);
-    notes.sort_custom(callable_mp_static(&NoteData::sort_notes_by_lane));
+    notes.sort_custom(callable_mp_static(&NoteData::compare_notes_by_lane));
     return notes;
 }
 
@@ -62,7 +62,7 @@ TypedArray<NoteData> RowData::get_notes_of_type(const StringName &p_note_type, c
     TypedArray<NoteData> note_list = starting_notes.filter(callable_mp_static(NoteData::is_note_type).bind(p_note_type));
     if (p_include_ends) {
         note_list.append_array(ending_notes.filter(callable_mp_static(NoteData::is_note_type).bind(p_note_type)));
-        note_list.sort_custom(callable_mp_static(&NoteData::sort_notes_by_lane));
+        note_list.sort_custom(callable_mp_static(&NoteData::compare_notes_by_lane));
     }
 
     return note_list;
@@ -96,14 +96,14 @@ void RowData::add_start_note(const Ref<NoteData> p_note) {
     ERR_FAIL_COND_MSG(has_note_at_lane(p_note->lane), vformat("Already has note at lane %d.", p_note->lane));
 
     starting_notes.push_back(p_note);
-    starting_notes.sort_custom(callable_mp_static(&NoteData::sort_notes_by_lane));
+    starting_notes.sort_custom(callable_mp_static(&NoteData::compare_notes_by_lane));
 }
 
 void RowData::add_end_note(const Ref<NoteData> p_note) {
     ERR_FAIL_COND_MSG(has_note_at_lane(p_note->lane), vformat("Already has note at lane %d.", p_note->lane));
 
     ending_notes.push_back(p_note);
-    ending_notes.sort_custom(callable_mp_static(&NoteData::sort_notes_by_lane));
+    ending_notes.sort_custom(callable_mp_static(&NoteData::compare_notes_by_lane));
 }
 
 void RowData::remove_note(const Ref<NoteData> p_note) {
@@ -115,8 +115,8 @@ void RowData::remove_note(const Ref<NoteData> p_note) {
     if (index != 1)
         ending_notes.remove_at(index);
     
-    starting_notes.sort_custom(callable_mp_static(&NoteData::sort_notes_by_lane));
-    ending_notes.sort_custom(callable_mp_static(&NoteData::sort_notes_by_lane));
+    starting_notes.sort_custom(callable_mp_static(&NoteData::compare_notes_by_lane));
+    ending_notes.sort_custom(callable_mp_static(&NoteData::compare_notes_by_lane));
 }
 
 void RowData::remove_note_at_lane(const uint8_t p_lane) {
@@ -128,8 +128,8 @@ void RowData::remove_note_at_lane(const uint8_t p_lane) {
     if (index != 1)
         ending_notes.remove_at(index);
     
-    starting_notes.sort_custom(callable_mp_static(&NoteData::sort_notes_by_lane));
-    ending_notes.sort_custom(callable_mp_static(&NoteData::sort_notes_by_lane));
+    starting_notes.sort_custom(callable_mp_static(&NoteData::compare_notes_by_lane));
+    ending_notes.sort_custom(callable_mp_static(&NoteData::compare_notes_by_lane));
 }
 
 bool RowData::has_note_at_lane(const uint8_t p_lane) const {
@@ -163,6 +163,23 @@ void RowData::convert_data(const TypedArray<NoteData> &p_time_changes, const Typ
     }
 }
 
+bool RowData::is_of_value(const Variant &p_row, const uint8_t p_offset, const RubiChart::QuantValue p_quant) {
+    RowData* casted_row = Object::cast_to<RowData>(p_row);
+    if (casted_row != nullptr)
+        return casted_row->offset == p_offset && casted_row->quant == p_quant;
+    
+    return false;
+}
+
+bool RowData::compare_rows(const Variant &p_a, const Variant &p_b) {
+    RowData* row_a = Object::cast_to<RowData>(p_a);
+    RowData* row_b = Object::cast_to<RowData>(p_b);
+    if (row_a != nullptr && row_b != nullptr)
+        return ((float)row_a->offset / (float)row_a->quant) < ((float)row_b->offset / (float)row_b->quant);
+
+    return p_a < p_b;
+}
+
 void RowData::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_section", "section"), &RowData::set_section);
     ClassDB::bind_method("get_section", &RowData::get_section);
@@ -194,4 +211,7 @@ void RowData::_bind_methods() {
     ClassDB::bind_method(D_METHOD("is_note_ending", "note"), &RowData::is_note_ending);
 
     ClassDB::bind_method(D_METHOD("convert_data", "time_changes", "sv_changes"), &RowData::convert_data);
+
+    ClassDB::bind_static_method("RowData", D_METHOD("is_of_value", "row", "offset", "quant"), &RowData::is_of_value);
+    ClassDB::bind_static_method("RowData", D_METHOD("compare_rows", "a", "b"), &RowData::compare_rows);
 }

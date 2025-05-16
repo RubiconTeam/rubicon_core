@@ -14,6 +14,7 @@ template <typename T>
 class TypedArray;
 
 class NoteData; // Neccessary so RowData knows that NoteData is a class, at the very least.
+class SectionData;
 
 class RowData : public Resource {
     GDCLASS(RowData, Resource);
@@ -55,6 +56,9 @@ public:
     bool is_note_ending(const Ref<NoteData> p_note) const;
     
     void convert_data(const TypedArray<NoteData> &p_time_changes, const TypedArray<SvChange> &p_sv_changes);
+
+    static bool is_of_value(const Variant &p_row, const uint8_t p_offset, const RubiChart::QuantValue p_quant);
+    static bool compare_rows(const Variant &p_a, const Variant &p_b);
 
 protected:
     static void _bind_methods();
