@@ -1,4 +1,5 @@
 #include "note_data.h"
+#include "../conductor.h"
 
 void NoteData::set_lane(const uint8_t p_lane) {
     lane = p_lane;
@@ -93,6 +94,39 @@ void NoteData::convert_data(const TypedArray<NoteData> &p_time_changes, const Ty
         measure_time = starting_row->section->measure + (float(starting_row->offset) / float(starting_row->quant));
         measure_length = !ending_row.is_null() ? (ending_row->section->measure + (float(ending_row->offset) / float(ending_row->quant))) - measure_time : 0.0f;
     }
+    
+    int i = 0;
+
+    Ref<TimeChange> starting_change = p_time_changes.back();
+    for (i = 0; i < p_time_changes.size(); i++) {
+        Ref<TimeChange> cur_change = p_time_changes[i];
+        if (cur_change->time > measure_time) {
+            starting_change = p_time_changes[i - 1];
+            break;
+        }
+    }
+
+    bool found_start = false;
+    bool found_end = false;
+    starting_scroll_velocity = ending_scroll_velocity = p_sv_changes.size() - 1;
+    for (i = 0; i < p_sv_changes.size(); i++) {
+        Ref<SvChange> cur_change = p_sv_changes[i];
+        if (cur_change->time > measure_time && !found_start) {
+            starting_scroll_velocity = i - 1;
+            found_start = true;
+        }
+
+        if (cur_change->time > measure_time + measure_length && !found_end) {
+            ending_scroll_velocity = i - 1;
+            found_end = true;
+        }
+
+        if (found_start && found_end)
+            break;
+    }
+
+    ms_time = Conductor::measure_to_ms(measure_time, starting_change->bpm, starting_change->time_signature_numerator) + starting_change->ms_time;
+    ms_length = Conductor::measure_range_to_ms(measure_time, measure_time + measure_length, p_time_changes);
 }
 
 bool NoteData::sort_notes_by_lane(const Variant &a, const Variant &b) {
