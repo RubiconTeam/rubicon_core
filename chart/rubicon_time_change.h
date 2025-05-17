@@ -1,13 +1,13 @@
-#ifndef TIME_CHANGE_H
-#define TIME_CHANGE_H
+#ifndef RUBICON_TIME_CHANGE_H
+#define RUBICON_TIME_CHANGE_H
 
 #include "core/object/ref_counted.h"
 #include "core/io/resource.h"
 
 #include "core/object/class_db.h"
 
-class TimeChange : public RefCounted {
-    GDCLASS(TimeChange, RefCounted);
+class RubiconTimeChange : public RefCounted {
+    GDCLASS(RubiconTimeChange, RefCounted);
 
 public:
     float time;
@@ -39,4 +39,4 @@ protected:
     static void _bind_methods();
 };
 
-#endif // TIME_CHANGE_H
+#endif // RUBICON_TIME_CHANGE_H

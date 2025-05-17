@@ -1,17 +1,17 @@
-#ifndef SV_CHANGE_H
-#define SV_CHANGE_H
+#ifndef RUBICON_SV_CHANGE_H
+#define RUBICON_SV_CHANGE_H
 
 #include "core/io/resource.h"
 
 #include "core/object/class_db.h"
 #include "core/variant/typed_array.h"
-#include "modules/rubicon_core/chart/time_change.h"
+#include "rubicon_time_change.h"
 
 template <typename T>
 class TypedArray;
 
-class SvChange : public Resource {
-    GDCLASS(SvChange, Resource);
+class RubiconSvChange : public Resource {
+    GDCLASS(RubiconSvChange, Resource);
 
 public:
     float time = 0.0f;
@@ -29,10 +29,10 @@ public:
     float get_ms_time() const;
     float get_position() const;
 
-    void convert_data(const TypedArray<TimeChange> &p_time_changes, const Ref<SvChange> p_previous_change = Ref<SvChange>());
+    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const Ref<RubiconSvChange> p_previous_change = Ref<RubiconSvChange>());
 
 protected:
     static void _bind_methods();
 };
 
-#endif // SV_CHANGE_H
+#endif // RUBICON_SV_CHANGE_H

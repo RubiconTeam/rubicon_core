@@ -1,5 +1,5 @@
-#ifndef NOTE_DATA_H
-#define NOTE_DATA_H
+#ifndef RUBICON_NOTE_DATA_H
+#define RUBICON_NOTE_DATA_H
 
 #include "core/io/resource.h"
 
@@ -7,17 +7,17 @@
 #include "core/variant/variant.h"
 #include "core/variant/typed_array.h"
 #include "core/variant/typed_dictionary.h"
-#include "row_data.h"
-#include "time_change.h"
-#include "sv_change.h"
+#include "rubicon_row_data.h"
+#include "rubicon_time_change.h"
+#include "rubicon_sv_change.h"
 
 template <typename T>
 class TypedArray;
 
-class RowData; // Neccessary so NoteData knows that RowData is a class, at the very least.
+class RubiconRowData; // Neccessary so NoteData knows that RowData is a class, at the very least.
 
-class NoteData : public Resource {
-    GDCLASS(NoteData, Resource);
+class RubiconNoteData : public Resource {
+    GDCLASS(RubiconNoteData, Resource);
 
 public:
     uint8_t lane;
@@ -49,11 +49,11 @@ public:
     int get_starting_scroll_velocity() const;
     int get_ending_scroll_velocity() const;
 
-    Ref<RowData> starting_row;
-    Ref<RowData> ending_row;
+    Ref<RubiconRowData> starting_row;
+    Ref<RubiconRowData> ending_row;
 
-    Ref<RowData> get_starting_row() const;
-    Ref<RowData> get_ending_row() const;
+    Ref<RubiconRowData> get_starting_row() const;
+    Ref<RubiconRowData> get_ending_row() const;
 
     bool should_miss = false;
     bool hit = false;
@@ -69,7 +69,7 @@ public:
     void set_counts_towards_score(const bool p_value);
     bool get_counts_towards_score() const;
 
-    void convert_data(const TypedArray<TimeChange> &p_time_changes, const TypedArray<SvChange> &p_sv_changes);
+    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconSvChange> &p_sv_changes);
 
     static bool compare_notes_by_lane(const Variant &p_a, const Variant &p_b);
     static bool is_note_lane(const Variant &p_note, const uint8_t p_lane);
@@ -79,4 +79,4 @@ protected:
     static void _bind_methods();
 };
 
-#endif // NOTE_DATA_H
+#endif // RUBICON_NOTE_DATA_H

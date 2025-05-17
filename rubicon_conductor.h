@@ -1,22 +1,22 @@
-#ifndef CONDUCTOR_H
-#define CONDUCTOR_H
+#ifndef RUBICON_CONDUCTOR_H
+#define RUBICON_CONDUCTOR_H
 
 #include "core/object/object.h"
 #include "core/object/class_db.h"
 #include "core/variant/typed_array.h"
-#include "chart/time_change.h"
+#include "chart/rubicon_time_change.h"
 
 template <typename T>
 class TypedArray;
 
-class Conductor : public Object {
-    GDCLASS(Conductor, Object);
+class RubiconConductor : public Object {
+    GDCLASS(RubiconConductor, Object);
 
 public:
-    Conductor();
-    ~Conductor();
+    RubiconConductor();
+    ~RubiconConductor();
 
-    static Conductor *get_singleton();
+    static RubiconConductor *get_singleton();
 
     // Fields
     int time_change_index = 0;
@@ -43,8 +43,8 @@ public:
     void set_audio_time(const float p_time);
     float get_audio_time() const;
 
-    void set_time_changes(const TypedArray<TimeChange> &p_time_changes);
-    TypedArray<TimeChange> get_time_changes() const;
+    void set_time_changes(const TypedArray<RubiconTimeChange> &p_time_changes);
+    TypedArray<RubiconTimeChange> get_time_changes() const;
 
     // Methods
     void run_callbacks();
@@ -54,7 +54,7 @@ public:
     void pause();
     void stop();
 
-    Ref<TimeChange> get_current_time_change();
+    Ref<RubiconTimeChange> get_current_time_change();
 
     void reset();
 
@@ -66,16 +66,16 @@ public:
     static float measure_to_ms(float p_measure, float p_bpm, float p_time_signature_numerator);
     static float beats_to_ms(float p_beat, float p_bpm);
     static float steps_to_ms(float p_step, float p_bpm, float p_time_signature_denominator);
-    static float measure_range_to_ms(float p_start, float p_end, const TypedArray<TimeChange> &p_time_changes);
+    static float measure_range_to_ms(float p_start, float p_end, const TypedArray<RubiconTimeChange> &p_time_changes);
     static float measure_to_beats(float p_measure, float p_time_signature_numerator);
     static float measure_to_steps(float p_measure, float p_time_signature_numerator, float p_time_signature_denominator);
     static float beats_to_steps(float p_beats, float p_time_signature_denominator);
     static float beats_to_measures(float p_beats, float p_time_signature_numerator);
     static float steps_to_measures(float p_steps, float p_time_signature_numerator, float p_time_signature_denominator);
-    static float ms_to_measures(float p_ms_time, const TypedArray<TimeChange> &p_time_changes);
+    static float ms_to_measures(float p_ms_time, const TypedArray<RubiconTimeChange> &p_time_changes);
 
 protected:
-    static Conductor *singleton;
+    static RubiconConductor *singleton;
 
 	static void _bind_methods();
 
@@ -94,11 +94,11 @@ private:
 	float _cached_measure;
 	float _cached_measure_time;
 
-	TypedArray<TimeChange> _time_changes;
+	TypedArray<RubiconTimeChange> _time_changes;
 	
 	int _last_beat = -2147483648;
 	int _last_step = -2147483648;
 	int _last_measure = -2147483648;
 };
 
-#endif // CONDUCTOR_H
+#endif // RUBICON_CONDUCTOR_H

@@ -21,7 +21,7 @@ void RubiconCore::_bind_methods() {
 
 RubiconCore::RubiconCore() {
     singleton = this;
-    
+
     quants = {
         RubiChart::QuantValue::QUANT_VALUE_4TH,
         RubiChart::QuantValue::QUANT_VALUE_8TH,
