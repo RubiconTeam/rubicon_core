@@ -55,22 +55,23 @@ public:
     Ref<RubiconRowData> get_starting_row() const;
     Ref<RubiconRowData> get_ending_row() const;
 
-    bool should_miss = false;
-    bool hit = false;
-    bool spawned = false;
-    bool counts_towards_score = true;
+    bool internal_should_miss = false;
+    bool internal_hit = false;
+    bool internal_spawned = false;
+    bool internal_counts_towards_score = true;
 
-    void set_should_miss(const bool p_value);
-    bool get_should_miss() const;
-    void set_hit(const bool p_value);
-    bool get_hit() const;
-    void set_spawned(const bool p_value);
-    bool get_spawned() const;
-    void set_counts_towards_score(const bool p_value);
-    bool get_counts_towards_score() const;
+    void set_internal_should_miss(const bool p_value);
+    bool get_internal_should_miss() const;
+    void set_internal_hit(const bool p_value);
+    bool get_internal_hit() const;
+    void set_internal_spawned(const bool p_value);
+    bool get_internal_spawned() const;
+    void set_internal_counts_towards_score(const bool p_value);
+    bool get_internal_counts_towards_score() const;
 
     void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconSvChange> &p_sv_changes);
 
+    static bool compare_notes_by_time(const Variant &p_a, const Variant &p_b);
     static bool compare_notes_by_lane(const Variant &p_a, const Variant &p_b);
     static bool is_note_lane(const Variant &p_note, const uint8_t p_lane);
     static bool is_note_type(const Variant &p_note, const StringName &p_type);

@@ -10,6 +10,7 @@
 #include "chart/rubicon_section_data.h"
 #include "chart/rubicon_sv_change.h"
 #include "chart/rubicon_time_change.h"
+#include "chart/rubicon_chart_data.h"
 
 static RubiconCore *CorePtr;
 static RubiconConductor *ConductorPtr;
@@ -32,10 +33,11 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	// Rubicon.Core.Chart
 	GDREGISTER_CLASS(RubiconNoteData);
 	GDREGISTER_CLASS(RubiconRowData);
-	GDREGISTER_CLASS(RubiChart);
 	GDREGISTER_CLASS(RubiconSectionData);
 	GDREGISTER_CLASS(RubiconSvChange);
 	GDREGISTER_CLASS(RubiconTimeChange); 
+	GDREGISTER_CLASS(RubiconChartData);
+	GDREGISTER_CLASS(RubiChart);
 }
 
 void uninitialize_rubicon_core_module(ModuleInitializationLevel p_level) {

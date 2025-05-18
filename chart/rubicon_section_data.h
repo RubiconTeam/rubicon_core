@@ -35,6 +35,8 @@ public:
     Ref<RubiconRowData> get_row(uint8_t p_offset, RubiChart::QuantValue p_quant) const;
     bool has_row(uint8_t p_offset, RubiChart::QuantValue p_quant) const;
 
+    static bool is_of_measure(const Variant &p_section, const uint8_t p_measure);
+    static bool compare_sections_by_measure(const Variant &p_a, const Variant &p_b);
     static void gcd_offset_and_quant(uint8_t &p_offset, RubiChart::QuantValue &p_quant);
 
 protected:

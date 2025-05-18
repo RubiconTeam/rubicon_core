@@ -57,36 +57,36 @@ Ref<RubiconRowData> RubiconNoteData::get_ending_row() const {
     return ending_row;
 }
 
-void RubiconNoteData::set_should_miss(const bool p_value) {
-    should_miss = p_value;
+void RubiconNoteData::set_internal_should_miss(const bool p_value) {
+    internal_should_miss = p_value;
 }
 
-bool RubiconNoteData::get_should_miss() const {
-    return should_miss;
+bool RubiconNoteData::get_internal_should_miss() const {
+    return internal_should_miss;
 }
 
-void RubiconNoteData::set_hit(const bool p_value) {
-    hit = p_value;
+void RubiconNoteData::set_internal_hit(const bool p_value) {
+    internal_hit = p_value;
 }
 
-bool RubiconNoteData::get_hit() const {
-    return hit;
+bool RubiconNoteData::get_internal_hit() const {
+    return internal_hit;
 }
 
-void RubiconNoteData::set_spawned(const bool p_value) {
-    spawned = p_value;
+void RubiconNoteData::set_internal_spawned(const bool p_value) {
+    internal_spawned = p_value;
 }
 
-bool RubiconNoteData::get_spawned() const {
-    return spawned;
+bool RubiconNoteData::get_internal_spawned() const {
+    return internal_spawned;
 }
 
-void RubiconNoteData::set_counts_towards_score(const bool p_value) {
-    counts_towards_score = p_value;
+void RubiconNoteData::set_internal_counts_towards_score(const bool p_value) {
+    internal_counts_towards_score = p_value;
 }
 
-bool RubiconNoteData::get_counts_towards_score() const {
-    return counts_towards_score;
+bool RubiconNoteData::get_internal_counts_towards_score() const {
+    return internal_counts_towards_score;
 }
 
 void RubiconNoteData::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconSvChange> &p_sv_changes) {
@@ -129,6 +129,15 @@ void RubiconNoteData::convert_data(const TypedArray<RubiconTimeChange> &p_time_c
     ms_length = RubiconConductor::measure_range_to_ms(measure_time, measure_time + measure_length, p_time_changes);
 }
 
+bool RubiconNoteData::compare_notes_by_time(const Variant &p_a, const Variant &p_b) {
+    RubiconNoteData* note_a = Object::cast_to<RubiconNoteData>(p_a);
+    RubiconNoteData* note_b = Object::cast_to<RubiconNoteData>(p_b);
+    if (note_a != nullptr && note_b != nullptr)
+        return note_a->measure_time < note_b->measure_time;
+    
+    return p_a < p_b;
+}
+
 bool RubiconNoteData::compare_notes_by_lane(const Variant &p_a, const Variant &p_b) {
     RubiconNoteData* note_a = Object::cast_to<RubiconNoteData>(p_a);
     RubiconNoteData* note_b = Object::cast_to<RubiconNoteData>(p_b);
@@ -164,24 +173,26 @@ void RubiconNoteData::_bind_methods() {
     ClassDB::bind_method("get_measure_time", &RubiconNoteData::get_measure_time);
     ClassDB::bind_method(D_METHOD("set_measure_length", "measure_length"), &RubiconNoteData::set_measure_length);
     ClassDB::bind_method("get_measure_length", &RubiconNoteData::get_measure_length);
-    ClassDB::bind_method(D_METHOD("set_should_miss", "should_miss"), &RubiconNoteData::set_should_miss);
-    ClassDB::bind_method("get_should_miss", &RubiconNoteData::get_should_miss);
-    ClassDB::bind_method(D_METHOD("set_hit", "hit"), &RubiconNoteData::set_hit);
-    ClassDB::bind_method("get_hit", &RubiconNoteData::get_hit);
-    ClassDB::bind_method(D_METHOD("set_spawned", "spawned"), &RubiconNoteData::set_spawned);
-    ClassDB::bind_method("get_spawned", &RubiconNoteData::get_spawned);
-    ClassDB::bind_method(D_METHOD("set_counts_towards_score", "counts_towards_score"), &RubiconNoteData::set_counts_towards_score);
-    ClassDB::bind_method("get_counts_towards_score", &RubiconNoteData::get_counts_towards_score);
+    ClassDB::bind_method(D_METHOD("set_internal_should_miss", "should_miss"), &RubiconNoteData::set_internal_should_miss);
+    ClassDB::bind_method("get_internal_should_miss", &RubiconNoteData::get_internal_should_miss);
+    ClassDB::bind_method(D_METHOD("set_internal_hit", "hit"), &RubiconNoteData::set_internal_hit);
+    ClassDB::bind_method("get_internal_hit", &RubiconNoteData::get_internal_hit);
+    ClassDB::bind_method(D_METHOD("set_internal_spawned", "spawned"), &RubiconNoteData::set_internal_spawned);
+    ClassDB::bind_method("get_internal_spawned", &RubiconNoteData::get_internal_spawned);
+    ClassDB::bind_method(D_METHOD("set_internal_counts_towards_score", "counts_towards_score"), &RubiconNoteData::set_internal_counts_towards_score);
+    ClassDB::bind_method("get_internal_counts_towards_score", &RubiconNoteData::get_internal_counts_towards_score);
 
     // Properties
     ADD_PROPERTY(PropertyInfo(Variant::INT, "lane"), "set_lane", "get_lane");
     ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "type"), "set_type", "get_type");
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "measure_time"), "set_measure_time", "get_measure_time");
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "measure_length"), "set_measure_length", "get_measure_length");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "should_miss"), "set_should_miss", "get_should_miss");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "hit"), "set_hit", "get_hit");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "spawned"), "set_spawned", "get_spawned");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "counts_towards_score"), "set_counts_towards_score", "get_counts_towards_score");
+    
+    ADD_GROUP("Internal", "internal_");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "internal_should_miss"), "set_internal_should_miss", "get_internal_should_miss");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "internal_hit"), "set_internal_hit", "get_internal_it");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "internal_spawned"), "set_internal_spawned", "get_internal_spawned");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "internal_counts_towards_score"), "set_internal_counts_towards_score", "get_internal_counts_towards_score");
 
     // Pure Getters
     ClassDB::bind_method("get_ms_time", &RubiconNoteData::get_ms_time);
@@ -194,6 +205,7 @@ void RubiconNoteData::_bind_methods() {
     // Methods
     ClassDB::bind_method(D_METHOD("convert_data", "time_changes", "sv_changes"), &RubiconNoteData::convert_data);
     
+    ClassDB::bind_static_method("RubiconNoteData", D_METHOD("comapre_notes_by_time", "a", "b"), &RubiconNoteData::compare_notes_by_time);
     ClassDB::bind_static_method("RubiconNoteData", D_METHOD("compare_notes_by_lane", "a", "b"), &RubiconNoteData::compare_notes_by_lane);
     ClassDB::bind_static_method("RubiconNoteData", D_METHOD("is_note_lane", "note", "lane"), &RubiconNoteData::is_note_lane);
     ClassDB::bind_static_method("RubiconNoteData", D_METHOD("is_note_type", "a", "b"), &RubiconNoteData::is_note_type);

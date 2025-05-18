@@ -87,6 +87,23 @@ bool RubiconSectionData::has_row(uint8_t p_offset, RubiChart::QuantValue p_quant
     return rows.find_custom(callable_mp_static(RubiconRowData::is_of_value).bind(p_offset, p_quant)) != -1;
 }
 
+bool RubiconSectionData::is_of_measure(const Variant &p_section, const uint8_t p_measure) {
+    RubiconSectionData* casted_section = Object::cast_to<RubiconSectionData>(p_section);
+    if (casted_section != nullptr)
+        return casted_section->measure == p_measure;
+    
+    return false;
+}
+
+bool RubiconSectionData::compare_sections_by_measure(const Variant &p_a, const Variant &p_b) {
+    RubiconSectionData* section_a = Object::cast_to<RubiconSectionData>(p_a);
+    RubiconSectionData* section_b = Object::cast_to<RubiconSectionData>(p_b);
+    if (section_a != nullptr && section_b != nullptr)
+        return section_a->measure < section_b->measure;
+
+    return p_a < p_b;
+}
+
 void RubiconSectionData::gcd_offset_and_quant(uint8_t &p_offset, RubiChart::QuantValue &p_quant) {
     for (int q = 0; q < RubiconCore::get_singleton()->quants.size(); q++) {
         uint8_t cur = RubiconCore::get_singleton()->quants[q];
@@ -120,5 +137,6 @@ void RubiconSectionData::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_row", "offset", "quant"), &RubiconSectionData::get_row);
     ClassDB::bind_method(D_METHOD("has_row", "offset", "quant"), &RubiconSectionData::has_row);
 
+    ClassDB::bind_static_method("RubiconSectionData", D_METHOD("compare_sections_by_measure", "a", "b"), &RubiconSectionData::compare_sections_by_measure);
     //ClassDB::bind_static_method("RubiconSectionData", D_METHOD("gcd_offset_and_quant", "offset", "quant"), &RubiconSectionData::gcd_offset_and_quant);
 }
