@@ -14,17 +14,17 @@
 template <typename T>
 class TypedArray;
 
-class RubiconRowData; // Neccessary so NoteData knows that RowData is a class, at the very least.
+class RubiconRowData;
 
 class RubiconNoteData : public Resource {
     GDCLASS(RubiconNoteData, Resource);
 
 public:
-    uint8_t lane;
-    StringName type;
+    uint8_t lane = 0;
+    StringName type = "";
 
-    float measure_time;
-    float measure_length;
+    float measure_time = 0.0f;
+    float measure_length = 0.0f;
 
     void set_lane(const uint8_t p_lane);
     uint8_t get_lane() const;

@@ -4,7 +4,6 @@
 #include "core/object/object.h"
 #include "core/object/class_db.h"
 #include "core/variant/typed_array.h"
-#include "chart/rubichart.h"
 
 template <typename T>
 class TypedArray;

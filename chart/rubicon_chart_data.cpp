@@ -97,20 +97,20 @@ TypedArray<RubiconNoteData> RubiconChartData::get_notes_of_type(const StringName
     return notes;
 }
 
-void RubiconChartData::add_note_start(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const RubiChart::QuantValue p_quant) {
+void RubiconChartData::add_note_start(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const uint8_t p_quant) {
     Ref<RubiconRowData> row = add_section(p_measure)->add_row(p_offset, p_quant);
     row->add_start_note(p_note);
     p_note->starting_row = row;
 }
 
-void RubiconChartData::add_note_end(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const RubiChart::QuantValue p_quant) {
+void RubiconChartData::add_note_end(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const uint8_t p_quant) {
     Ref<RubiconRowData> row = add_section(p_measure)->add_row(p_offset, p_quant);
     row->add_end_note(p_note);
     p_note->starting_row = row;
 }
 
 void RubiconChartData::add_note_at_measure_time(Ref<RubiconNoteData> p_note, const float p_measure_time, const float p_length) {
-    uint8_t start_offset; RubiChart::QuantValue start_quant;
+    uint8_t start_offset; uint8_t start_quant;
     int base_measure = int(Math::floor(p_measure_time));
     measure_offset_to_offset_and_quant(p_measure_time - base_measure, start_offset, start_quant);
     add_note_start(p_note, base_measure, start_offset, start_quant);
@@ -119,7 +119,7 @@ void RubiconChartData::add_note_at_measure_time(Ref<RubiconNoteData> p_note, con
         return;
     
     float measure_end = p_measure_time + p_length;
-    uint8_t end_offset; RubiChart::QuantValue end_quant;
+    uint8_t end_offset; uint8_t end_quant;
     int base_end_measure = int(Math::floor(measure_end));
     measure_offset_to_offset_and_quant(measure_end - base_end_measure, end_offset, end_quant);
     add_note_end(p_note, base_end_measure, end_offset, end_quant);
@@ -130,7 +130,7 @@ void RubiconChartData::add_stray_note(Ref<RubiconNoteData> p_note) {
     strays.sort_custom(callable_mp_static(&RubiconNoteData::compare_notes_by_time));
 }
 
-void RubiconChartData::move_note_start(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const RubiChart::QuantValue p_quant) {
+void RubiconChartData::move_note_start(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const uint8_t p_quant) {
     if (p_note->ending_row.is_null()) {
         remove_note_start(p_note);
         add_note_start(p_note, p_measure, p_offset, p_quant);
@@ -138,7 +138,7 @@ void RubiconChartData::move_note_start(Ref<RubiconNoteData> p_note, const int p_
     }
 
     int measure_distance = p_note->ending_row->section->measure - p_note->starting_row->section->measure;
-    RubiChart::QuantValue distance_quant = MAX(p_note->starting_row->quant, p_note->ending_row->quant);
+    uint8_t distance_quant = MAX(p_note->starting_row->quant, p_note->ending_row->quant);
     
     uint8_t starting_offset = p_note->starting_row->offset;
     if (p_note->ending_row->quant > p_note->starting_row->quant)
@@ -149,7 +149,7 @@ void RubiconChartData::move_note_start(Ref<RubiconNoteData> p_note, const int p_
         ending_offset *= p_note->starting_row->quant / p_note->ending_row->quant;
     
     int distance_offset = ((measure_distance * distance_quant) + ending_offset) - starting_offset;
-    RubiChart::QuantValue ending_quant = MAX(p_quant, distance_quant);
+    uint8_t ending_quant = MAX(p_quant, distance_quant);
 
     // I'm sorry it's kinda tough figuring out what to name these
     int offset_int = int32_t(p_offset);
@@ -164,7 +164,7 @@ void RubiconChartData::move_note_start(Ref<RubiconNoteData> p_note, const int p_
     add_note_end(p_note, total_distance / ending_quant, uint8_t(total_distance % ending_quant), ending_quant);
 }
 
-void RubiconChartData::move_note_end(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const RubiChart::QuantValue p_quant) {
+void RubiconChartData::move_note_end(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const uint8_t p_quant) {
     remove_note_end(p_note);
     add_note_end(p_note, p_measure, p_offset, p_quant);
 }
@@ -241,6 +241,11 @@ void RubiconChartData::cleanup_sections() {
 
 void RubiconChartData::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes) {
     int s;
+    for (s = 0; s < sv_changes.size(); s++) {
+        Ref<RubiconSvChange> sv_change = sv_changes[s];
+        sv_change->convert_data(p_time_changes, sv_changes[s - 1]);
+    }
+
     for (s = 0; s < sections.size(); s++) {
         Ref<RubiconSectionData> section = sections[s];
         section->convert_data(p_time_changes, sv_changes);
@@ -252,10 +257,10 @@ void RubiconChartData::convert_data(const TypedArray<RubiconTimeChange> &p_time_
     }
 }
 
-void RubiconChartData::measure_offset_to_offset_and_quant(const float p_measure_offset, uint8_t &p_offset, RubiChart::QuantValue &p_quant) {
+void RubiconChartData::measure_offset_to_offset_and_quant(const float p_measure_offset, uint8_t &p_offset, uint8_t &p_quant) {
     PackedByteArray quants = RubiconCore::get_singleton()->quants;
 
-    p_quant = static_cast<RubiChart::QuantValue>(quants[quants.size() - 1]);
+    p_quant = static_cast<uint8_t>(quants[quants.size() - 1]);
     p_offset = uint8_t(CLAMP(Math::round(p_measure_offset * p_quant), 0, p_quant - 1));
     for (int q = 0; q < quants.size(); q++) {
         float result = p_measure_offset * quants[q];
@@ -265,13 +270,13 @@ void RubiconChartData::measure_offset_to_offset_and_quant(const float p_measure_
                 continue;
             
             p_offset = uint8_t(rounded_result);
-            p_quant = static_cast<RubiChart::QuantValue>(quants[q]);
+            p_quant = static_cast<uint8_t>(quants[q]);
             return;
         }
 
         // If it's already snapped
         p_offset = uint8_t(result);
-        p_quant = static_cast<RubiChart::QuantValue>(quants[q]);
+        p_quant = static_cast<uint8_t>(quants[q]);
         return;
     }
 }

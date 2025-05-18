@@ -6,7 +6,6 @@
 #include "core/object/class_db.h"
 #include "core/variant/typed_array.h"
 #include "rubicon_note_data.h"
-#include "rubichart.h"
 #include "rubicon_section_data.h"
 #include "rubicon_sv_change.h"
 
@@ -23,7 +22,7 @@ public:
     Ref<RubiconSectionData> section;
     uint8_t lane_priority = 0;
     uint8_t offset = 0;
-    RubiChart::QuantValue quant = RubiChart::QuantValue::QUANT_VALUE_4TH;
+    uint8_t quant = 4;
 
     TypedArray<RubiconNoteData> starting_notes;
     TypedArray<RubiconNoteData> ending_notes;
@@ -37,8 +36,8 @@ public:
     void set_offset(const uint8_t p_offset);
     uint8_t get_offset() const;
 
-    void set_quant(const RubiChart::QuantValue p_quant);
-    RubiChart::QuantValue get_quant() const;
+    void set_quant(const uint8_t p_quant);
+    uint8_t get_quant() const;
 
     TypedArray<RubiconNoteData> get_notes(const bool p_include_ends = false) const;
     Ref<RubiconNoteData> get_note_at_lane(const uint8_t p_lane, const bool p_include_ends = false) const;
@@ -57,7 +56,7 @@ public:
     
     void convert_data(const TypedArray<RubiconNoteData> &p_time_changes, const TypedArray<RubiconSvChange> &p_sv_changes);
 
-    static bool is_of_value(const Variant &p_row, const uint8_t p_offset, const RubiChart::QuantValue p_quant);
+    static bool is_of_value(const Variant &p_row, const uint8_t p_offset, const uint8_t p_quant);
     static bool compare_rows(const Variant &p_a, const Variant &p_b);
 
 protected:

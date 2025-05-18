@@ -5,7 +5,6 @@
 #include "rubicon_time_change.h"
 #include "rubicon_sv_change.h"
 #include "rubicon_row_data.h"
-#include "rubichart.h"
 
 template <typename T>
 class TypedArray;
@@ -27,17 +26,17 @@ public:
 
     void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconSvChange> &p_sv_changes);
     
-    Ref<RubiconRowData> add_row(uint8_t p_offset, RubiChart::QuantValue p_quant);
+    Ref<RubiconRowData> add_row(uint8_t p_offset, uint8_t p_quant);
     void remove_row(const Ref<RubiconRowData> p_row);
-    void remove_row_at(uint8_t p_offset, RubiChart::QuantValue p_quant);
+    void remove_row_at(uint8_t p_offset, uint8_t p_quant);
 
     void cleanup_rows();
-    Ref<RubiconRowData> get_row(uint8_t p_offset, RubiChart::QuantValue p_quant) const;
-    bool has_row(uint8_t p_offset, RubiChart::QuantValue p_quant) const;
+    Ref<RubiconRowData> get_row(uint8_t p_offset, uint8_t p_quant) const;
+    bool has_row(uint8_t p_offset, uint8_t p_quant) const;
 
     static bool is_of_measure(const Variant &p_section, const uint8_t p_measure);
     static bool compare_sections_by_measure(const Variant &p_a, const Variant &p_b);
-    static void gcd_offset_and_quant(uint8_t &p_offset, RubiChart::QuantValue &p_quant);
+    static void gcd_offset_and_quant(uint8_t &p_offset, uint8_t &p_quant);
 
 protected:
     static void _bind_methods();

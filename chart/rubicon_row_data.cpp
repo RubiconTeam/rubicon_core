@@ -25,11 +25,11 @@ uint8_t RubiconRowData::get_offset() const {
     return offset;
 }
 
-void RubiconRowData::set_quant(const RubiChart::QuantValue p_quant) {
+void RubiconRowData::set_quant(const uint8_t p_quant) {
     quant = p_quant;
 }
 
-RubiChart::QuantValue RubiconRowData::get_quant() const {
+uint8_t RubiconRowData::get_quant() const {
     return quant;
 }
 
@@ -163,7 +163,7 @@ void RubiconRowData::convert_data(const TypedArray<RubiconNoteData> &p_time_chan
     }
 }
 
-bool RubiconRowData::is_of_value(const Variant &p_row, const uint8_t p_offset, const RubiChart::QuantValue p_quant) {
+bool RubiconRowData::is_of_value(const Variant &p_row, const uint8_t p_offset, const uint8_t p_quant) {
     RubiconRowData* casted_row = Object::cast_to<RubiconRowData>(p_row);
     if (casted_row != nullptr)
         return casted_row->offset == p_offset && casted_row->quant == p_quant;

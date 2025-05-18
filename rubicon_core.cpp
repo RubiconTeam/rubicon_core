@@ -1,5 +1,4 @@
 #include "rubicon_core.h"
-#include "chart/rubichart.h"
 
 RubiconCore *RubiconCore::singleton = nullptr;
 
@@ -22,18 +21,7 @@ void RubiconCore::_bind_methods() {
 RubiconCore::RubiconCore() {
     singleton = this;
 
-    quants = {
-        RubiChart::QuantValue::QUANT_VALUE_4TH,
-        RubiChart::QuantValue::QUANT_VALUE_8TH,
-        RubiChart::QuantValue::QUANT_VALUE_12TH,
-        RubiChart::QuantValue::QUANT_VALUE_16TH,
-        RubiChart::QuantValue::QUANT_VALUE_24ND,
-        RubiChart::QuantValue::QUANT_VALUE_32ND,
-        RubiChart::QuantValue::QUANT_VALUE_32ND,
-        RubiChart::QuantValue::QUANT_VALUE_48TH,
-        RubiChart::QuantValue::QUANT_VALUE_64TH,
-        RubiChart::QuantValue::QUANT_VALUE_192ND
-    };
+    quants = {4, 8, 12, 16, 24, 32, 48, 64, 192};
 }
 
 RubiconCore::~RubiconCore() {

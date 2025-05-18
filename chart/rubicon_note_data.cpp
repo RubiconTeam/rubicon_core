@@ -190,7 +190,7 @@ void RubiconNoteData::_bind_methods() {
     
     ADD_GROUP("Internal", "internal_");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "internal_should_miss"), "set_internal_should_miss", "get_internal_should_miss");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "internal_hit"), "set_internal_hit", "get_internal_it");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "internal_hit"), "set_internal_hit", "get_internal_hit");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "internal_spawned"), "set_internal_spawned", "get_internal_spawned");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "internal_counts_towards_score"), "set_internal_counts_towards_score", "get_internal_counts_towards_score");
 

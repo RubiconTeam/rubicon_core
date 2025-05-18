@@ -5,7 +5,6 @@
 #include "core/object/class_db.h"
 #include "core/variant/typed_array.h"
 #include "core/string/string_name.h"
-#include "rubichart.h"
 #include "rubicon_sv_change.h"
 #include "rubicon_section_data.h"
 #include "rubicon_note_data.h"
@@ -13,11 +12,13 @@
 template <typename T>
 class TypedArray;
 
+class RubiconSectionData;
+
 class RubiconChartData : public Resource {
     GDCLASS(RubiconChartData, Resource);
 
 public:
-    StringName chart_name;
+    StringName chart_name = "";
     uint8_t lanes = 0;
     TypedArray<RubiconSvChange> sv_changes;
 
@@ -40,13 +41,13 @@ public:
     TypedArray<RubiconNoteData> get_notes_at_lane(const uint8_t p_lane, const bool p_include_ends = false) const;
     TypedArray<RubiconNoteData> get_notes_of_type(const StringName &p_type, const bool p_include_ends = false) const;
 
-    void add_note_start(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const RubiChart::QuantValue p_quant);
-    void add_note_end(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const RubiChart::QuantValue p_quant);
+    void add_note_start(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const uint8_t p_quant);
+    void add_note_end(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const uint8_t p_quant);
     void add_note_at_measure_time(Ref<RubiconNoteData> p_note, const float p_measure_time, const float p_length);
     void add_stray_note(Ref<RubiconNoteData> note);
 
-    void move_note_start(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const RubiChart::QuantValue p_quant);
-    void move_note_end(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const RubiChart::QuantValue p_quant);
+    void move_note_start(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const uint8_t p_quant);
+    void move_note_end(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const uint8_t p_quant);
 
     void remove_note_start(Ref<RubiconNoteData> p_note);
     void remove_note_end(Ref<RubiconNoteData> p_note);
@@ -59,7 +60,7 @@ public:
     void cleanup_sections();
     void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes);
 
-    static void measure_offset_to_offset_and_quant(const float p_measure_time, uint8_t &p_offset, RubiChart::QuantValue &p_quant);
+    static void measure_offset_to_offset_and_quant(const float p_measure_time, uint8_t &p_offset, uint8_t &p_quant);
 
 protected:
     static void _bind_methods();

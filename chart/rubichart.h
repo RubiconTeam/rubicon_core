@@ -2,29 +2,41 @@
 #define RUBICHART_H
 
 #include "core/io/resource.h"
+#include "core/variant/typed_array.h"
+#include "rubicon_chart_data.h"
+#include "rubicon_time_change.h"
+
+template <typename T>
+class TypedArray;
+
+class RubiconChartData;
 
 class RubiChart : public Resource {
     GDCLASS(RubiChart, Resource);
 
 public:
-    enum QuantValue : uint8_t {
-        QUANT_VALUE_4TH = 4,
-        QUANT_VALUE_8TH = 8,
-        QUANT_VALUE_12TH = 12,
-        QUANT_VALUE_16TH = 16,
-        QUANT_VALUE_24ND = 24,
-        QUANT_VALUE_32ND = 32,
-        QUANT_VALUE_48TH = 48,
-        QUANT_VALUE_64TH = 64,
-        QUANT_VALUE_192ND = 192
-    };
-
+    static const uint32_t CHART_VERSION = 33619968; // 2.1.0.0
     static const uint8_t MAX_LANE_COUNT = 32;
+
+    String charter = "";
+    uint32_t difficulty = 0;
+    float scroll_speed = 0.0f;
+    TypedArray<RubiconChartData> charts;
+
+    void set_charter(const String &p_value);
+    String get_charter() const;
+    void set_difficulty(const uint32_t p_value);
+    uint32_t get_difficulty() const;
+    void set_scroll_speed(const float p_value);
+    float get_scroll_speed() const;
+    void set_charts(const TypedArray<RubiconChartData> &p_value);
+    TypedArray<RubiconChartData> get_charts() const;
+
+    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes);
+    PackedStringArray get_all_notetypes() const;
 
 protected:
     static void _bind_methods();
 };
-
-VARIANT_ENUM_CAST(RubiChart::QuantValue);
 
 #endif // RUBICHART_H

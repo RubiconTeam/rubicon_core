@@ -25,7 +25,7 @@ void RubiconSectionData::convert_data(const TypedArray<RubiconTimeChange> &p_tim
     }
 }
 
-Ref<RubiconRowData> RubiconSectionData::add_row(uint8_t p_offset, RubiChart::QuantValue p_quant) {
+Ref<RubiconRowData> RubiconSectionData::add_row(uint8_t p_offset, uint8_t p_quant) {
     gcd_offset_and_quant(p_offset, p_quant);
 
     Ref<RubiconRowData> row = get_row(p_offset, p_quant);
@@ -50,7 +50,7 @@ void RubiconSectionData::remove_row(const Ref<RubiconRowData> p_row) {
     rows.sort_custom(callable_mp_static(RubiconRowData::compare_rows));
 }
 
-void RubiconSectionData::remove_row_at(uint8_t p_offset, RubiChart::QuantValue p_quant) {
+void RubiconSectionData::remove_row_at(uint8_t p_offset, uint8_t p_quant) {
     gcd_offset_and_quant(p_offset, p_quant);
     Ref<RubiconRowData> row = get_row(p_offset, p_quant);
     if (row.is_null())
@@ -72,7 +72,7 @@ void RubiconSectionData::cleanup_rows() {
     rows = new_list;
 }
 
-Ref<RubiconRowData> RubiconSectionData::get_row(uint8_t p_offset, RubiChart::QuantValue p_quant) const {
+Ref<RubiconRowData> RubiconSectionData::get_row(uint8_t p_offset, uint8_t p_quant) const {
     gcd_offset_and_quant(p_offset, p_quant);
     
     int index = rows.find_custom(callable_mp_static(RubiconRowData::is_of_value).bind(p_offset, p_quant));
@@ -82,7 +82,7 @@ Ref<RubiconRowData> RubiconSectionData::get_row(uint8_t p_offset, RubiChart::Qua
     return Ref<RubiconRowData>();
 }
 
-bool RubiconSectionData::has_row(uint8_t p_offset, RubiChart::QuantValue p_quant) const {
+bool RubiconSectionData::has_row(uint8_t p_offset, uint8_t p_quant) const {
     gcd_offset_and_quant(p_offset, p_quant);
     return rows.find_custom(callable_mp_static(RubiconRowData::is_of_value).bind(p_offset, p_quant)) != -1;
 }
@@ -104,7 +104,7 @@ bool RubiconSectionData::compare_sections_by_measure(const Variant &p_a, const V
     return p_a < p_b;
 }
 
-void RubiconSectionData::gcd_offset_and_quant(uint8_t &p_offset, RubiChart::QuantValue &p_quant) {
+void RubiconSectionData::gcd_offset_and_quant(uint8_t &p_offset, uint8_t &p_quant) {
     for (int q = 0; q < RubiconCore::get_singleton()->quants.size(); q++) {
         uint8_t cur = RubiconCore::get_singleton()->quants[q];
         if (cur >= p_quant) 
@@ -114,7 +114,7 @@ void RubiconSectionData::gcd_offset_and_quant(uint8_t &p_offset, RubiChart::Quan
             continue;
         
         p_offset /= cur;
-        p_quant = static_cast<RubiChart::QuantValue>(cur);
+        p_quant = cur;
     }
 }
 

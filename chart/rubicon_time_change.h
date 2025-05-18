@@ -10,8 +10,8 @@ class RubiconTimeChange : public RefCounted {
     GDCLASS(RubiconTimeChange, RefCounted);
 
 public:
-    float time;
-    float bpm;
+    float time = 0.0f;
+    float bpm = 0.0f;
     float time_signature_numerator = 4;
     float time_signature_denominator = 4;
 

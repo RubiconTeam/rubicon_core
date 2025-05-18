@@ -19,8 +19,6 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
 
-	// Register classes
-
 	// Rubicon.Core
     GDREGISTER_CLASS(RubiconConductor);
     ConductorPtr = memnew(RubiconConductor);
