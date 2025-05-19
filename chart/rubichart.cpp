@@ -96,3 +96,32 @@ void RubiChart::_bind_methods() {
     ClassDB::bind_method(D_METHOD("convert_data", "time_changes"), &RubiChart::convert_data);
     ClassDB::bind_method("get_all_notetypes", &RubiChart::get_all_notetypes);
 }
+
+//Loader
+void RubiconChartLoader::get_recognized_extensions(List<String> *p_extensions) const {
+    p_extensions->push_back("rbc");
+}
+
+bool RubiconChartLoader::handles_type(const String &p_type) const {
+    return (p_type == "RubiChart");
+}
+
+String RubiconChartLoader::get_resource_type(const String &p_path) const {
+    String el = p_path.get_extension().to_lower();
+    if (el == "rbc") {
+        return "RubiChart";
+    }
+    return "";
+}
+
+//Saver
+void RubiconChartSaver::get_recognized_extensions(const Ref<Resource> &p_resource, List<String> *p_extensions) const {
+    Ref<RubiChart> chart = p_resource;
+    if (chart.is_valid()) {
+        p_extensions->push_back("rbc");
+    }
+}
+
+bool RubiconChartSaver::recognize(const Ref<Resource> &p_resource) const {
+    return (p_resource.is_valid() && p_resource->is_class("RubiChart"));
+}
