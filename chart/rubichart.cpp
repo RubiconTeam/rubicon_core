@@ -1,4 +1,6 @@
 #include "rubichart.h"
+#include "rubichart_loader.h"
+#include "core/io/marshalls.h"
 
 void RubiChart::set_charter(const String &p_value) {
     charter = p_value;
@@ -98,6 +100,55 @@ void RubiChart::_bind_methods() {
 }
 
 //Loader
+static int64_t decode_u32(PackedByteArray *p_instance, int64_t p_offset) {
+    uint64_t size = p_instance->size();
+    ERR_FAIL_COND_V(p_offset < 0 || p_offset > (int64_t(size) - 4), 0);
+    const uint8_t *r = p_instance->ptr();
+    return decode_uint32(&r[p_offset]);
+}
+
+Ref<Resource> RubiconChartLoader::load(const String &p_path, const String &p_original_path, Error *r_error, bool p_use_sub_threads, float *r_progress, CacheMode p_cache_mode) {
+    if (!(::ResourceLoader::exists(p_path)))
+        return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
+    
+    Ref<FileAccess> reader = FileAccess::open(p_path, FileAccess::READ);
+    if (reader->get_error() != OK)
+        return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
+    
+    Ref<RubiChart> chart = memnew(RubiChart);
+    String extension = p_path.get_extension().to_lower();
+    if (extension != "rbc")
+        return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
+
+    PackedByteArray* rbc_check = (PackedByteArray*)(reader->get_buffer(4).ptr());
+    if (decode_u32(rbc_check, 0) == 16842752) {
+        print_error("RBC file at " + reader->get_path() + "is version 1.1! Please convert it to RubiChart v2.1.0.");
+        reader->close();
+        return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
+    }
+    else {
+        if (RubiChartLoader::get_string_from_utf8(rbc_check) != "RBCN")
+            return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
+        
+        int version = reader->get_32();
+        switch (version) {
+            case 16843008:
+                print_error("");
+                reader->close();
+                return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
+            case 33554432:
+                chart = RubiChartLoader::convert(reader, 33554432);
+                break;
+            default:
+                chart = RubiChartLoader::convert(reader);
+                break;
+        }
+    }
+
+    reader->close();
+    return chart;
+}
+
 void RubiconChartLoader::get_recognized_extensions(List<String> *p_extensions) const {
     p_extensions->push_back("rbc");
 }

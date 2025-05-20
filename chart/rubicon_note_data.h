@@ -23,6 +23,11 @@ public:
     uint8_t lane = 0;
     StringName type = "";
 
+    TypedDictionary<StringName, Variant> parameters;
+
+    void set_parameters(const TypedDictionary<StringName, Variant> &p_parameters);
+    TypedDictionary<StringName, Variant> get_parameters() const;
+
     float measure_time = 0.0f;
     float measure_length = 0.0f;
 

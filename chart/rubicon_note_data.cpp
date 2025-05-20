@@ -1,6 +1,14 @@
 #include "rubicon_note_data.h"
 #include "../rubicon_conductor.h"
 
+void RubiconNoteData::set_parameters(const TypedDictionary<StringName, Variant> &p_parameters) {
+    parameters = p_parameters;
+}
+
+TypedDictionary<StringName, Variant> RubiconNoteData::get_parameters() const {
+    return parameters;
+}
+
 void RubiconNoteData::set_lane(const uint8_t p_lane) {
     lane = p_lane;
 }
@@ -165,6 +173,8 @@ bool RubiconNoteData::is_note_type(const Variant &p_note, const StringName &p_ty
 
 void RubiconNoteData::_bind_methods() {
     // Getters and Setters for Properties
+    ClassDB::bind_method(D_METHOD("set_parameters", "parameters"), &RubiconNoteData::set_parameters);
+    ClassDB::bind_method("get_parameters", &RubiconNoteData::get_parameters);
     ClassDB::bind_method(D_METHOD("set_lane", "lane"), &RubiconNoteData::set_lane);
     ClassDB::bind_method("get_lane", &RubiconNoteData::get_lane);
     ClassDB::bind_method(D_METHOD("set_type", "type"), &RubiconNoteData::set_type);
@@ -183,6 +193,7 @@ void RubiconNoteData::_bind_methods() {
     ClassDB::bind_method("get_internal_counts_towards_score", &RubiconNoteData::get_internal_counts_towards_score);
 
     // Properties
+    ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "parameters", PROPERTY_HINT_DICTIONARY_TYPE, "StringName;Variant"), "set_parameters", "get_parameters");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "lane"), "set_lane", "get_lane");
     ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "type"), "set_type", "get_type");
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "measure_time"), "set_measure_time", "get_measure_time");
