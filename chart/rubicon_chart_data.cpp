@@ -99,13 +99,13 @@ TypedArray<RubiconNoteData> RubiconChartData::get_notes_of_type(const StringName
 
 void RubiconChartData::add_note_start(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const uint8_t p_quant) {
     Ref<RubiconRowData> row = add_section(p_measure)->add_row(p_offset, p_quant);
-    row->add_start_note(p_note);
+    row->add_starting_note(p_note);
     p_note->starting_row = row;
 }
 
 void RubiconChartData::add_note_end(Ref<RubiconNoteData> p_note, const int p_measure, const uint8_t p_offset, const uint8_t p_quant) {
     Ref<RubiconRowData> row = add_section(p_measure)->add_row(p_offset, p_quant);
-    row->add_end_note(p_note);
+    row->add_ending_note(p_note);
     p_note->starting_row = row;
 }
 

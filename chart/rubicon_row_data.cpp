@@ -92,14 +92,30 @@ PackedStringArray RubiconRowData::get_note_types() const {
     return note_types;
 }
 
-void RubiconRowData::add_start_note(const Ref<RubiconNoteData> p_note) {
+void RubiconRowData::set_starting_notes(const TypedArray<RubiconNoteData> p_starting_notes) {
+    starting_notes = p_starting_notes;
+}
+
+TypedArray<RubiconNoteData> RubiconRowData::get_starting_notes() const {
+    return starting_notes;
+}
+
+void RubiconRowData::add_starting_note(const Ref<RubiconNoteData> p_note) {
     ERR_FAIL_COND_MSG(has_note_at_lane(p_note->lane), vformat("Already has note at lane %d.", p_note->lane));
 
     starting_notes.push_back(p_note);
     starting_notes.sort_custom(callable_mp_static(&RubiconNoteData::compare_notes_by_lane));
 }
 
-void RubiconRowData::add_end_note(const Ref<RubiconNoteData> p_note) {
+void RubiconRowData::set_ending_notes(const TypedArray<RubiconNoteData> p_ending_notes) {
+    ending_notes = p_ending_notes;
+}
+
+TypedArray<RubiconNoteData> RubiconRowData::get_ending_notes() const {
+    return ending_notes;
+}
+
+void RubiconRowData::add_ending_note(const Ref<RubiconNoteData> p_note) {
     ERR_FAIL_COND_MSG(has_note_at_lane(p_note->lane), vformat("Already has note at lane %d.", p_note->lane));
 
     ending_notes.push_back(p_note);
@@ -200,8 +216,16 @@ void RubiconRowData::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_notes_of_type", "note_type", "include_ends"), &RubiconRowData::get_notes_of_type);
     ClassDB::bind_method("get_note_types", &RubiconRowData::get_note_types);
 
-    ClassDB::bind_method(D_METHOD("add_start_note", "note"), &RubiconRowData::add_start_note);
-    ClassDB::bind_method(D_METHOD("add_end_note", "note"), &RubiconRowData::add_end_note);
+    ClassDB::bind_method(D_METHOD("set_starting_notes", "starting_notes"), &RubiconRowData::set_starting_notes);
+    ClassDB::bind_method("get_starting_notes", &RubiconRowData::get_starting_notes);
+    ClassDB::bind_method(D_METHOD("add_starting_note", "note"), &RubiconRowData::add_starting_note);
+    
+    ClassDB::bind_method(D_METHOD("set_ending_notes", "ending_notes"), &RubiconRowData::set_ending_notes);
+    ClassDB::bind_method("get_ending_notes", &RubiconRowData::get_ending_notes);
+    ClassDB::bind_method(D_METHOD("add_ending_note", "note"), &RubiconRowData::add_ending_note);
+    
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "starting_notes", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconNoteData")), "set_starting_notes", "get_starting_notes");
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "ending_notes", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconNoteData")), "set_ending_notes", "get_ending_notes");
 
     ClassDB::bind_method(D_METHOD("remove_note", "note"), &RubiconRowData::remove_note);
     ClassDB::bind_method(D_METHOD("remove_note_at_lane", "lane"), &RubiconRowData::remove_note_at_lane);

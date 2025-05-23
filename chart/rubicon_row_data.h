@@ -44,8 +44,13 @@ public:
     TypedArray<RubiconNoteData> get_notes_of_type(const StringName &p_note_type, const bool p_include_ends = false) const;
     PackedStringArray get_note_types() const;
 
-    void add_start_note(const Ref<RubiconNoteData> p_note);
-    void add_end_note(const Ref<RubiconNoteData> p_note);
+    void set_starting_notes(const TypedArray<RubiconNoteData> p_starting_notes);
+    TypedArray<RubiconNoteData> get_starting_notes() const;
+    void add_starting_note(const Ref<RubiconNoteData> p_note);
+
+    void set_ending_notes(const TypedArray<RubiconNoteData> p_ending_notes);
+    TypedArray<RubiconNoteData> get_ending_notes() const;
+    void add_ending_note(const Ref<RubiconNoteData> p_note);
 
     void remove_note(const Ref<RubiconNoteData> p_note);
     void remove_note_at_lane(const uint8_t p_lane);

@@ -79,18 +79,15 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
 
         TypedDictionary<uint8_t, RubiconNoteData> hold_note_cache;
         int section_count = int32_t(p_reader->get_32());
-        TypedArray<RubiconSectionData> sections;
-        print_line("section count: "+String::num_int64(section_count));
+        //print_line("section count: "+String::num_int64(section_count));
         while (section_count > 0) {
             section_count--;
 
             Ref<RubiconSectionData> cur_section = memnew(RubiconSectionData);
             cur_section->measure = int32_t(p_reader->get_32());
-            sections.push_back(cur_section);
 
             int row_count = int32_t(p_reader->get_32());
-            TypedArray<RubiconRowData> rows;
-            print_line("row count: "+String::num_int64(row_count));
+            //print_line("row count: "+String::num_int64(row_count));
             while (row_count > 0) {
                 row_count--;
 
@@ -98,8 +95,6 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
                 cur_row->quant = p_reader->get_8();
                 cur_row->offset = p_reader->get_8();
                 cur_row->lane_priority = p_reader->get_8();
-
-                rows.push_back(cur_row);
 
                 uint8_t note_count = p_reader->get_8();
                 //print_line("note count: "+String::num_int64(note_count));
@@ -141,19 +136,17 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
 
                 cur_row->starting_notes = starting_notes;
                 cur_row->ending_notes = ending_notes;
+
+                cur_section->rows.push_back(cur_row);
             }
             
-            cur_section->rows = rows;
+            chart_data->sections.push_back(cur_section);
         }
 
-        // here
-        chart_data->sections = sections;
-
-        int note_count = int32_t(p_reader->get_32());
-        TypedArray<RubiconNoteData> stray_notes;
-        for (int n = 0; n < note_count; n++) {
+        // Stray Notes
+        int stray_note_count = int32_t(p_reader->get_32());
+        for (int n = 0; n < stray_note_count; n++) {
             Ref<RubiconNoteData> note = memnew(RubiconNoteData);
-            stray_notes.push_back(note);
 
             uint8_t serialized_type = p_reader->get_8();
             note->measure_time = p_reader->get_float();
@@ -176,9 +169,10 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
                     read_note_parameters(p_reader, note);
                     break;
             }
+
+            chart_data->strays.push_back(note);
         }
-        
-        chart_data->strays = stray_notes;
+
         chart->charts.push_back(chart_data);
     }
 
