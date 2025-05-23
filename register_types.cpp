@@ -16,7 +16,7 @@ static RubiconCore *CorePtr;
 static RubiconConductor *ConductorPtr;
 
 static Ref<RubiconChartLoader> rubicon_chart_loader;
-//static Ref<RubiconChartSaver> rubicon_chart_saver;
+static Ref<RubiconChartSaver> rubicon_chart_saver;
 
 void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
@@ -43,7 +43,9 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	// Rubicon Chart Loader/Saver
 	rubicon_chart_loader.instantiate();
 	ResourceLoader::add_resource_format_loader(rubicon_chart_loader);
-	//ResourceSaver::add_resource_format_saver(rubicon_chart_saver);
+	
+	rubicon_chart_saver.instantiate();
+	ResourceSaver::add_resource_format_saver(rubicon_chart_saver);
 }
 
 void uninitialize_rubicon_core_module(ModuleInitializationLevel p_level) {

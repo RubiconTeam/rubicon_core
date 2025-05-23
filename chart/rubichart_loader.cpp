@@ -28,7 +28,7 @@ void read_note_parameters(const Ref<FileAccess> p_reader, Ref<RubiconNoteData> n
 }
 
 Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const int version) {
-    print_line("RubiChartLoader::convert");
+    //print_line("RubiChartLoader::convert");
     Ref<RubiChart> chart = memnew(RubiChart);
     chart->difficulty = p_reader->get_32();
     chart->scroll_speed = p_reader->get_float();
@@ -36,7 +36,7 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
     chart->charter = get_string_from_utf8(&charter_buffer);
     
     int note_types_amount = int32_t(p_reader->get_32());
-    print_line("note type amount: "+String::num_int64(note_types_amount));
+    //print_line("note type amount: "+String::num_int64(note_types_amount));
     PackedStringArray note_types;
     int i = 0;
     for (i = 0; i < note_types_amount; i++) {
@@ -45,14 +45,14 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
     }
 
     int chart_amount = int32_t(p_reader->get_32());
-    print_line("chart amount: "+String::num_int64(chart_amount));
+    //print_line("chart amount: "+String::num_int64(chart_amount));
     for (i = 0; i < chart_amount; i++) {
         Ref<RubiconChartData> chart_data = memnew(RubiconChartData);
         PackedByteArray chart_name_buffer = get_next_buffer(p_reader);
         chart_data->chart_name = get_string_from_utf8(&chart_name_buffer);
-        print_line(get_string_from_utf8(&chart_name_buffer));
+        //print_line(get_string_from_utf8(&chart_name_buffer));
         chart_data->lanes = int32_t(p_reader->get_32());
-        print_line(chart_data->lanes);
+        //print_line(chart_data->lanes);
 
         int s = 0;
         
@@ -69,7 +69,7 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
         }
 
         int sv_change_count = int32_t(p_reader->get_32());
-        print_line("sv changes count: "+String::num_int64(sv_change_count));
+        //print_line("sv changes count: "+String::num_int64(sv_change_count));
         for (s = 0; s < sv_change_count; s++) {
             Ref<RubiconSvChange> sv_change = memnew(RubiconSvChange);
             sv_change->time = p_reader->get_float();

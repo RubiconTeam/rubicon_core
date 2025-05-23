@@ -1,5 +1,6 @@
 #include "rubichart.h"
 #include "rubichart_loader.h"
+#include "rubichart_saver.h"
 #include "core/io/marshalls.h"
 
 void RubiChart::set_charter(const String &p_value) {
@@ -134,7 +135,7 @@ Ref<Resource> RubiconChartLoader::load(const String &p_path, const String &p_ori
         int version = reader->get_32();
         switch (version) {
             case 16843008:
-                print_error("");
+                print_error("RBC file at "+ reader->get_path() +" is version 1.1! Please convert it to RubiChart v2.1.0.");
                 reader->close();
                 return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
             case 33554432:
@@ -146,7 +147,6 @@ Ref<Resource> RubiconChartLoader::load(const String &p_path, const String &p_ori
                 break;
         }
     }
-    print_line("chart finished loading or something");
 
     reader->close();
     return chart;
@@ -169,6 +169,24 @@ String RubiconChartLoader::get_resource_type(const String &p_path) const {
 }
 
 //Saver
+Error RubiconChartSaver::save(const Ref<Resource> &p_resource, const String &p_path, uint32_t p_flags) {
+    if (!p_resource->is_class("RubiChart"))
+        return FAILED;
+    
+    Ref<FileAccess> writer = FileAccess::open(p_path, FileAccess::WRITE);
+    Error error = writer->get_error();
+    if (error != OK)
+        return error;
+
+    Ref<RubiChart> chart = p_resource;
+    String extension = p_path.get_extension().to_lower();
+    if (extension == "rbc")
+        RubiChartSaver::save(chart, writer);
+
+    print_line("successfully saved chart");
+    return OK;
+}
+
 void RubiconChartSaver::get_recognized_extensions(const Ref<Resource> &p_resource, List<String> *p_extensions) const {
     Ref<RubiChart> chart = p_resource;
     if (chart.is_valid()) {
