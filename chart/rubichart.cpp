@@ -114,20 +114,21 @@ Ref<Resource> RubiconChartLoader::load(const String &p_path, const String &p_ori
     Ref<FileAccess> reader = FileAccess::open(p_path, FileAccess::READ);
     if (reader->get_error() != OK)
         return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
-    
+
     Ref<RubiChart> chart = memnew(RubiChart);
     String extension = p_path.get_extension().to_lower();
     if (extension != "rbc")
         return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
-
-    PackedByteArray* rbc_check = (PackedByteArray*)(reader->get_buffer(4).ptr());
-    if (decode_u32(rbc_check, 0) == 16842752) {
+    
+    PackedByteArray rbc_check = reader->get_buffer(4);
+    print_line(rbc_check);
+    if (decode_u32(&rbc_check, 0) == 16842752) {
         print_error("RBC file at " + reader->get_path() + "is version 1.1! Please convert it to RubiChart v2.1.0.");
         reader->close();
         return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
     }
     else {
-        if (RubiChartLoader::get_string_from_utf8(rbc_check) != "RBCN")
+        if (RubiChartLoader::get_string_from_utf8(&rbc_check) != "RBCN")
             return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
         
         int version = reader->get_32();
@@ -137,6 +138,7 @@ Ref<Resource> RubiconChartLoader::load(const String &p_path, const String &p_ori
                 reader->close();
                 return Ref<Resource>(); // Temporary replacement for ERR_INVALID_DATA
             case 33554432:
+                print_line("loading rbc 2.0.0");
                 chart = RubiChartLoader::convert(reader, 33554432);
                 break;
             default:
@@ -144,6 +146,7 @@ Ref<Resource> RubiconChartLoader::load(const String &p_path, const String &p_ori
                 break;
         }
     }
+    print_line("chart finished loading or something");
 
     reader->close();
     return chart;

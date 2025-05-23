@@ -4,8 +4,8 @@
 #include "core/variant/typed_dictionary.h"
 #include "core/variant/variant_utility.h"
 
-PackedByteArray* get_next_buffer(const Ref<FileAccess> p_reader) {
-    return (PackedByteArray*)(p_reader->get_buffer(int32_t(p_reader->get_32())).ptr());
+PackedByteArray get_next_buffer(const Ref<FileAccess> p_reader) {
+    return p_reader->get_buffer(int32_t(p_reader->get_32()));
 }
 
 String RubiChartLoader::get_string_from_utf8(PackedByteArray *p_instance) {
@@ -20,36 +20,56 @@ String RubiChartLoader::get_string_from_utf8(PackedByteArray *p_instance) {
 void read_note_parameters(const Ref<FileAccess> p_reader, Ref<RubiconNoteData> note) {
     int param_count = int32_t(p_reader->get_32());
     for (int i = 0; i < param_count; i++) {
-        StringName param_name = RubiChartLoader::get_string_from_utf8(get_next_buffer(p_reader));
-        Variant param_value = VariantUtilityFunctions::bytes_to_var(*get_next_buffer(p_reader));
+        PackedByteArray param_name_buffer = get_next_buffer(p_reader);
+        StringName param_name = RubiChartLoader::get_string_from_utf8(&param_name_buffer);
+        Variant param_value = VariantUtilityFunctions::bytes_to_var(get_next_buffer(p_reader));
         note->parameters.set(param_name, param_value);
     }
 }
 
 Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const int version) {
+    print_line("RubiChartLoader::convert");
     Ref<RubiChart> chart = memnew(RubiChart);
     chart->difficulty = p_reader->get_32();
     chart->scroll_speed = p_reader->get_float();
-    chart->charter = get_string_from_utf8(get_next_buffer(p_reader));
-
-    int i = 0;
+    PackedByteArray charter_buffer = get_next_buffer(p_reader);
+    chart->charter = get_string_from_utf8(&charter_buffer);
+    
+    int note_types_amount = int32_t(p_reader->get_32());
+    print_line("note type amount: "+String::num_int64(note_types_amount));
     PackedStringArray note_types;
-    for (i = 0; i < note_types.size(); i++) {
-        note_types.push_back(get_string_from_utf8(get_next_buffer(p_reader)));
+    int i = 0;
+    for (i = 0; i < note_types_amount; i++) {
+        PackedByteArray note_type_buffer = get_next_buffer(p_reader);
+        note_types.push_back(get_string_from_utf8(&note_type_buffer));
     }
 
     int chart_amount = int32_t(p_reader->get_32());
+    print_line("chart amount: "+String::num_int64(chart_amount));
     for (i = 0; i < chart_amount; i++) {
         Ref<RubiconChartData> chart_data = memnew(RubiconChartData);
-        chart_data->chart_name = get_string_from_utf8(get_next_buffer(p_reader));
+        PackedByteArray chart_name_buffer = get_next_buffer(p_reader);
+        chart_data->chart_name = get_string_from_utf8(&chart_name_buffer);
+        print_line(get_string_from_utf8(&chart_name_buffer));
         chart_data->lanes = int32_t(p_reader->get_32());
+        print_line(chart_data->lanes);
 
         int s = 0;
         
-        if (version == 33554432) // target switch skipping for RBC 2.0.0
-            p_reader->seek(p_reader->get_position() + int32_t(p_reader->get_32()));
+        if (version == 33554432) { // target switch skipping for RBC 2.0.0
+            // todo: proper skipping
+            int target_switch_amount = int32_t(p_reader->get_32());
+            for (s = 0; s < target_switch_amount; s++) {
+                float time = p_reader->get_float();
+                PackedByteArray switch_name_length = get_next_buffer(p_reader);
+                String name = get_string_from_utf8(&switch_name_length);
+            }
+
+            //p_reader->seek(p_reader->get_position() + int32_t(p_reader->get_32()));
+        }
 
         int sv_change_count = int32_t(p_reader->get_32());
+        print_line("sv changes count: "+String::num_int64(sv_change_count));
         for (s = 0; s < sv_change_count; s++) {
             Ref<RubiconSvChange> sv_change = memnew(RubiconSvChange);
             sv_change->time = p_reader->get_float();
@@ -60,6 +80,7 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
         TypedDictionary<uint8_t, RubiconNoteData> hold_note_cache;
         int section_count = int32_t(p_reader->get_32());
         TypedArray<RubiconSectionData> sections;
+        print_line("section count: "+String::num_int64(section_count));
         while (section_count > 0) {
             section_count--;
 
@@ -69,6 +90,7 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
 
             int row_count = int32_t(p_reader->get_32());
             TypedArray<RubiconRowData> rows;
+            print_line("row count: "+String::num_int64(row_count));
             while (row_count > 0) {
                 row_count--;
 
@@ -80,6 +102,7 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
                 rows.push_back(cur_row);
 
                 uint8_t note_count = p_reader->get_8();
+                //print_line("note count: "+String::num_int64(note_count));
                 TypedArray<RubiconNoteData> starting_notes;
                 TypedArray<RubiconNoteData> ending_notes;
                 while (note_count > 0) {
@@ -97,7 +120,7 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
                     }
 
                     bool is_hold = ((note_data & 0b10000000) >> 7) == 1;
-                    bool has_type = ((note_data & 0b01000000) >> 7) == 1;
+                    bool has_type = ((note_data & 0b01000000) >> 6) == 1;
                     bool has_params = ((note_data & 0b00100000) >> 5) == 1;
 
                     Ref<RubiconNoteData> cur_note = memnew(RubiconNoteData);
@@ -123,7 +146,8 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
             cur_section->rows = rows;
         }
 
-        chart_data->sections.push_back(sections);
+        // here
+        chart_data->sections = sections;
 
         int note_count = int32_t(p_reader->get_32());
         TypedArray<RubiconNoteData> stray_notes;
