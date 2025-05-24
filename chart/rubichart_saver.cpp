@@ -43,6 +43,7 @@ void RubiChartSaver::save(const Ref<RubiChart> chart, Ref<FileAccess> writer) {
     TypedArray<StringName> note_types;
     TypedDictionary<StringName, int> type_index_map;
 
+    // Note type caching
     int i;
     for (i = 0; i < chart->charts.size(); i++) {
         Ref<RubiconChartData> chart_data = chart->charts[i];
@@ -60,13 +61,14 @@ void RubiChartSaver::save(const Ref<RubiChart> chart, Ref<FileAccess> writer) {
                     bool has_type = String(note->type).to_lower() != "normal";
                     if (!has_type || type_index_map.has(note->type))
                         continue;
-                    
+                    print_line("found note type: "+String(note->type));
                     note_types.push_back(note->type);
                     type_index_map.set(note->type, note_types.size() - 1);
                 }
             }
         }
 
+        // Stray note type caching
         for (s = 0; s < chart_data->strays.size(); s++) {
             Ref<RubiconNoteData> stray_note = chart_data->strays[s];
 
@@ -147,10 +149,16 @@ void RubiChartSaver::save(const Ref<RubiChart> chart, Ref<FileAccess> writer) {
                     if (has_type)
                         note_data = (1 << 6) | note_data;
                     
-                        // I HAVE TO NULL CHECK THE DICTIONARY BUT I FORGOT HOW TO IN HERE!!
-                    bool has_params = !(note->parameters.is_empty());
+                    bool has_params = note->parameters.size() > 0;
                     if (has_params)
                         note_data = (1 << 5) | note_data;
+                    
+                    writer->store_8(note_data);
+                    if (has_type)
+                        writer->store_32(type_index_map[note->type]);
+                    
+                    if (has_params)
+                        write_note_parameters(writer, note);
                 }
             }
         }
