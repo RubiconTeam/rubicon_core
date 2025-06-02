@@ -9,17 +9,26 @@ class RubiconEventMeta : public Resource {
     GDCLASS(RubiconEventMeta, Resource);
 
 public:
-    TypedArray<RubiconEventData> event_data_array;
+    TypedArray<RubiconEventData> events_data;
     int index;
 
-    RubiconEventData get_current_event() const;
-    RubiconEventData get_next_event() const;
-    bool has_next_event() const;
+    void set_events_data(const TypedArray<RubiconEventData> p_events_data);
+    TypedArray<RubiconEventData> get_events_data() const;
+
+    Ref<RubiconEventData> get_current_event();
+    bool has_next_event();
+    Ref<RubiconEventData> get_next_event();
+
+    void set_index(const int p_index);
+    int get_index() const;
 
     void format();
-    
-    void set_index(const int idx);
-    int get_index() const;
+
+protected:
+    static void _bind_methods();
+
+private:
+    static bool sort_events(const Variant &p_a, const Variant &p_b);
 };
 
 #endif

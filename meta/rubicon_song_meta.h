@@ -2,7 +2,7 @@
 #define RUBICON_SONG_META_H
 
 #include "core/io/resource.h"
-#include "servers/audio_server.h"
+#include "servers/audio/audio_stream.h"
 #include "rubicon_song_difficulty.h"
 #include "rubicon_event_meta.h"
 
@@ -33,18 +33,17 @@ public:
 
     PackedStringArray playable_charts;
 
-    Ref<RubiconSongMeta> convert_data() const;
+    Ref<RubiconSongMeta> convert_data();
     
-    Ref<RubiconSongDifficulty> get_difficulty_by_index(const int index) const;
-    Ref<RubiconSongDifficulty> get_difficulty_by_name(const String name, const String rule_set) const;
-    Ref<RubiconSongDifficulty> get_first_difficulty_of_rule_set(const String rule_set) const;
+    Ref<RubiconSongDifficulty> get_difficulty_by_index(const int p_index) const;
+    Ref<RubiconSongDifficulty> get_difficulty_by_name(const String p_name) const;
     
-    int find_difficulty(const String name, const String rule_set) const;
-    bool has_difficulty(const String name, const String rule_set) const;
+    int find_difficulty(const String p_name) const;
+    bool has_difficulty(const String p_name) const;
 
     // Setters / Getters
-    void set_name(const String p_name);
-    String get_name() const;
+    void set_song_name(const String p_name);
+    String get_song_name() const;
 
     void set_artist(const String p_artist);
     String get_artist() const;
@@ -58,8 +57,8 @@ public:
     void set_difficulties(const TypedArray<RubiconSongDifficulty> p_difficulties);
     TypedArray<RubiconSongDifficulty> get_difficulties() const;
 
-    void set_event_meta(const RubiconEventMeta p_event_meta);
-    RubiconEventMeta get_event_meta() const;
+    void set_event_meta(const Ref<RubiconEventMeta> p_event_meta);
+    Ref<RubiconEventMeta> get_event_meta() const;
 
     void set_time_changes(const TypedArray<RubiconTimeChange> p_time_changes);
     TypedArray<RubiconTimeChange> get_time_changes() const;
@@ -70,7 +69,7 @@ public:
     void set_ui_style(const String p_ui_style);
     String get_ui_style() const;
 
-    void set_stages(const PackedStringArray p_stage);
+    void set_stages(const PackedStringArray p_stages);
     PackedStringArray get_stages() const;
 
     void set_characters(const PackedStringArray p_characters);
@@ -81,6 +80,12 @@ public:
 
     void set_playable_charts(const PackedStringArray p_playable_charts);
     PackedStringArray get_playable_charts() const;
+
+protected:
+    static void _bind_methods();
+
+private:
+    static bool find_index(const Variant &p_a, const Variant &p_b);
 };
 
 #endif
