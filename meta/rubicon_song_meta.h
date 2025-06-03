@@ -5,6 +5,8 @@
 #include "servers/audio/audio_stream.h"
 #include "rubicon_song_difficulty.h"
 #include "rubicon_event_meta.h"
+#include "core/config/project_settings.h"
+#include "rubicon_character_meta.h"
 
 class AudioStream;
 
@@ -15,23 +17,24 @@ public:
     String name;
     String artist;
 
-    Ref<AudioStream> instrumental;
-    Ref<AudioStream> vocals;
+    Ref<AudioStream> instrumental = nullptr;
+    Ref<AudioStream> vocals = nullptr;
 
     TypedArray<RubiconSongDifficulty> difficulties;
-    Ref<RubiconEventMeta> event_meta;
+    Ref<RubiconEventMeta> event_meta = nullptr;
 
     TypedArray<RubiconTimeChange> time_changes;
     PackedStringArray modules;
 
-    String ui_style;
+    String ui_style = ProjectSettings::get_singleton()->get_setting("rubicon/default_ruleset", "default");
 
-    PackedStringArray stages;
-    PackedStringArray characters;
+    // this is gonna be changed once we figure out how stages should be displayed
+    PackedStringArray stages = get_default_stages();
+    TypedArray<RubiconCharacterMeta> characters = get_default_characters();
 
     float audio_start_offset = 0.0;
 
-    PackedStringArray playable_charts;
+    PackedStringArray playable_charts = {"Player"};
 
     Ref<RubiconSongMeta> convert_data();
     
@@ -72,8 +75,8 @@ public:
     void set_stages(const PackedStringArray p_stages);
     PackedStringArray get_stages() const;
 
-    void set_characters(const PackedStringArray p_characters);
-    PackedStringArray get_characters() const;
+    void set_characters(const TypedArray<RubiconCharacterMeta> p_characters);
+    TypedArray<RubiconCharacterMeta> get_characters() const;
 
     void set_audio_start_offset(const float p_audio_start_offset);
     float get_audio_start_offset() const;
@@ -85,6 +88,8 @@ protected:
     static void _bind_methods();
 
 private:
+    PackedStringArray get_default_stages();
+    TypedArray<RubiconCharacterMeta> get_default_characters();
     static bool find_index(const Variant &p_a, const Variant &p_b);
 };
 

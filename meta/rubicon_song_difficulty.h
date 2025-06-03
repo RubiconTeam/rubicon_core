@@ -9,7 +9,7 @@ class RubiconSongDifficulty : public Resource {
 
 public:
     String name;
-    Ref<RubiChart> chart;
+    Ref<RubiChart> chart = nullptr;
 
     void set_difficulty_name(const String p_name);
     String get_difficulty_name() const;

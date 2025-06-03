@@ -81,12 +81,35 @@ PackedStringArray RubiconSongMeta::get_stages() const {
     return stages;
 }
 
-void RubiconSongMeta::set_characters(const PackedStringArray p_characters) {
+PackedStringArray RubiconSongMeta::get_default_stages() {
+    // this is gonna be changed once we figure out how stages should be displayed
+    return ProjectSettings::get_singleton()->get_setting("rubicon/stage_placeholder", "stage");
+}
+
+void RubiconSongMeta::set_characters(const TypedArray<RubiconCharacterMeta> p_characters) {
     characters = p_characters;
 }
 
-PackedStringArray RubiconSongMeta::get_characters() const {
+TypedArray<RubiconCharacterMeta> RubiconSongMeta::get_characters() const {
     return characters;
+}
+
+TypedArray<RubiconCharacterMeta> RubiconSongMeta::get_default_characters() {
+    TypedArray<RubiconCharacterMeta> default_characters;
+
+    Ref<RubiconCharacterMeta> default_player = memnew(RubiconCharacterMeta);
+    default_player->character = ProjectSettings::get_singleton()->get_setting("rubicon/character_placeholder", "res://resources/game/characters/placeholder.tscn");
+    default_player->nickname = "Player";
+    default_player->bar_line = "Player";
+    default_characters.push_back(default_player);
+
+    Ref<RubiconCharacterMeta> default_opponent = memnew(RubiconCharacterMeta);
+    default_opponent->character = ProjectSettings::get_singleton()->get_setting("rubicon/character_placeholder", "res://resources/game/characters/placeholder.tscn");
+    default_opponent->nickname = "Opponent";
+    default_opponent->bar_line = "Opponent";
+    default_characters.push_back(default_opponent);
+
+    return default_characters;
 }
 
 void RubiconSongMeta::set_audio_start_offset(const float p_audio_start_offset) {
@@ -202,7 +225,7 @@ void RubiconSongMeta::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "modules"), "set_modules", "get_modules");
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "ui_style"), "set_ui_style", "get_ui_style");
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "stages"), "set_stages", "get_stages");
-    ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "characters"), "set_characters", "get_characters");
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "characters", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconCharacterMeta")), "set_characters", "get_characters");
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "audio_start_offset"), "set_audio_start_offset", "get_audio_start_offset");
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "playable_charts"), "set_playable_charts", "get_playable_charts");
 }

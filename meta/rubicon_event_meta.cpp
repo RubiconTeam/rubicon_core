@@ -53,5 +53,4 @@ void RubiconEventMeta::_bind_methods() {
     ClassDB::bind_method("get_index", &RubiconEventMeta::get_index);
 
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "events_data", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconEventData")), "set_events_data", "get_events_data");
-    //ADD_PROPERTY(PropertyInfo(Variant::INT, "index"), "set_index", "get_index");
 }
