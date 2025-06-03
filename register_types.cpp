@@ -49,6 +49,7 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(RubiconEventMeta);
 	GDREGISTER_CLASS(RubiconSongDifficulty);
 	GDREGISTER_CLASS(RubiconSongMeta);
+	GDREGISTER_CLASS(RubiconCharacterMeta);
 
 	// Rubicon Chart Loader/Saver
 	rubicon_chart_loader.instantiate();
@@ -67,4 +68,9 @@ void uninitialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 
 	Engine::get_singleton()->remove_singleton("RubiconCore");
 	memdelete(CorePtr);
+
+	ResourceLoader::remove_resource_format_loader(rubicon_chart_loader);
+	rubicon_chart_loader = nullptr;
+	ResourceSaver::remove_resource_format_saver(rubicon_chart_saver);
+	rubicon_chart_saver = nullptr;
 }
