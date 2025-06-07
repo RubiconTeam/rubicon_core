@@ -69,7 +69,7 @@ TypedArray<RubiconNoteData> RubiconChartData::get_notes_at_lane(const uint8_t p_
             Ref<RubiconNoteData> row_note = cur_row->get_note_at_lane(p_lane, p_include_ends);
             if (row_note.is_null())
                 continue;
-            
+
             notes.append(row_note);
         }
     }
@@ -117,7 +117,7 @@ void RubiconChartData::add_note_at_measure_time(Ref<RubiconNoteData> p_note, con
 
     if (p_length <= 0.0f)
         return;
-    
+
     float measure_end = p_measure_time + p_length;
     uint8_t end_offset; uint8_t end_quant;
     int base_end_measure = int(Math::floor(measure_end));
@@ -139,15 +139,15 @@ void RubiconChartData::move_note_start(Ref<RubiconNoteData> p_note, const int p_
 
     int measure_distance = p_note->ending_row->section->measure - p_note->starting_row->section->measure;
     uint8_t distance_quant = MAX(p_note->starting_row->quant, p_note->ending_row->quant);
-    
+
     uint8_t starting_offset = p_note->starting_row->offset;
     if (p_note->ending_row->quant > p_note->starting_row->quant)
         starting_offset *= p_note->ending_row->quant / p_note->starting_row->quant;
-    
+
     uint8_t ending_offset = p_note->ending_row->offset;
     if (p_note->starting_row->quant > p_note->ending_row->quant)
         ending_offset *= p_note->starting_row->quant / p_note->ending_row->quant;
-    
+
     int distance_offset = ((measure_distance * distance_quant) + ending_offset) - starting_offset;
     uint8_t ending_quant = MAX(p_quant, distance_quant);
 
@@ -155,11 +155,11 @@ void RubiconChartData::move_note_start(Ref<RubiconNoteData> p_note, const int p_
     int offset_int = int32_t(p_offset);
     if (distance_quant > p_quant)
         offset_int *= distance_quant / p_quant;
-    
+
     int distance_int = int32_t(distance_offset);
     if (p_quant > distance_quant)
         distance_int *= p_quant / distance_quant;
-    
+
     int total_distance = offset_int + distance_int;
     add_note_end(p_note, total_distance / ending_quant, uint8_t(total_distance % ending_quant), ending_quant);
 }
@@ -175,7 +175,7 @@ void RubiconChartData::remove_note_start(Ref<RubiconNoteData> p_note) {
 
     if (p_note->ending_row.is_null())
         return;
-    
+
     remove_note_end(p_note);
 }
 
@@ -188,7 +188,7 @@ void RubiconChartData::remove_stray_note(Ref<RubiconNoteData> p_stray) {
     int index = strays.find(p_stray);
     if (index == -1)
         return;
-    
+
     strays.remove_at(index);
 }
 
@@ -196,7 +196,7 @@ Ref<RubiconSectionData> RubiconChartData::add_section(const int p_measure) {
     Ref<RubiconSectionData> section = get_section_at_measure(p_measure);
     if (!section.is_null())
         return section;
-    
+
     section = memnew(RubiconSectionData);
     section->measure = p_measure;
 
@@ -210,7 +210,7 @@ void RubiconChartData::remove_section(const int p_measure) {
     Ref<RubiconSectionData> section = get_section_at_measure(p_measure);
     if (section.is_null())
         return;
-    
+
     int index = sections.find(section);
     sections.remove_at(index);
     sections.sort_custom(callable_mp_static(&RubiconSectionData::compare_sections_by_measure));
@@ -220,7 +220,7 @@ Ref<RubiconSectionData> RubiconChartData::get_section_at_measure(const int p_mea
     int index = sections.find_custom(callable_mp_static(&RubiconSectionData::compare_sections_by_measure));
     if (index < 0)
         return Ref<RubiconSectionData>();
-    
+
     return sections[index];
 }
 
@@ -231,10 +231,10 @@ void RubiconChartData::cleanup_sections() {
         cur_section->cleanup_rows();
         if (cur_section->rows.size() <= 0)
             continue;
-        
+
         new_list.append(cur_section);
     }
-    
+
     sections = new_list;
     sections.sort_custom(callable_mp_static(&RubiconSectionData::compare_sections_by_measure));
 }
@@ -264,11 +264,11 @@ void RubiconChartData::measure_offset_to_offset_and_quant(const float p_measure_
     p_offset = uint8_t(CLAMP(Math::round(p_measure_offset * p_quant), 0, p_quant - 1));
     for (int q = 0; q < quants.size(); q++) {
         float result = p_measure_offset * quants[q];
-        if (fmodf32(result, 1.0f) != 0) { // If it's not already snapped
+        if (fmodf(result, 1.0f) != 0) { // If it's not already snapped
             int rounded_result = uint8_t(result);
             if (!Math::is_equal_approx(result, rounded_result, 0.1f))
                 continue;
-            
+
             p_offset = uint8_t(rounded_result);
             p_quant = static_cast<uint8_t>(quants[q]);
             return;
