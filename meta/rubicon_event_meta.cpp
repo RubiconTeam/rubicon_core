@@ -9,7 +9,7 @@ TypedArray<RubiconEventData> RubiconEventMeta::get_events_data() const {
 }
 
 Ref<RubiconEventData> RubiconEventMeta::get_current_event() {
-    events_data[index];
+    return events_data[index];
 }
 
 bool RubiconEventMeta::has_next_event() {
@@ -19,7 +19,7 @@ bool RubiconEventMeta::has_next_event() {
 Ref<RubiconEventData> RubiconEventMeta::get_next_event() {
     if (!has_next_event())
         return nullptr;
-    
+
     index++;
     return events_data[index];
 }
@@ -37,7 +37,7 @@ bool RubiconEventMeta::sort_events(const Variant &p_a, const Variant &p_b) {
     RubiconEventData* event_b = Object::cast_to<RubiconEventData>(p_b);
     if (event_a != nullptr && event_b != nullptr)
         return event_a->time < event_b->time;
-    
+
     return p_a < p_b;
 }
 
