@@ -164,18 +164,18 @@ bool RubiconRowData::is_note_ending(const Ref<RubiconNoteData> p_note) const {
     return ending_notes.has(p_note);
 }
 
-void RubiconRowData::convert_data(const TypedArray<RubiconNoteData> &p_time_changes, const TypedArray<RubiconSvChange> &p_sv_changes) {
+void RubiconRowData::convert_data(const TypedArray<RubiconNoteData> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities) {
     int i;
     for (i = 0; i < starting_notes.size(); i++) {
         Ref<RubiconNoteData> cur_note = starting_notes[i];
         cur_note->starting_row = this;
-        cur_note->convert_data(p_time_changes, p_sv_changes);
+        cur_note->convert_data(p_time_changes, p_velocities);
     }
     
     for (i = 0; i < ending_notes.size(); i++) {
         Ref<RubiconNoteData> cur_note = ending_notes[i];
         cur_note->ending_row = this;
-        cur_note->convert_data(p_time_changes, p_sv_changes);
+        cur_note->convert_data(p_time_changes, p_velocities);
     }
 }
 
@@ -234,7 +234,7 @@ void RubiconRowData::_bind_methods() {
     ClassDB::bind_method(D_METHOD("is_note_starting", "note"), &RubiconRowData::is_note_starting);
     ClassDB::bind_method(D_METHOD("is_note_ending", "note"), &RubiconRowData::is_note_ending);
 
-    ClassDB::bind_method(D_METHOD("convert_data", "time_changes", "sv_changes"), &RubiconRowData::convert_data);
+    ClassDB::bind_method(D_METHOD("convert_data", "time_changes", "velocities"), &RubiconRowData::convert_data);
 
     ClassDB::bind_static_method("RubiconRowData", D_METHOD("is_of_value", "row", "offset", "quant"), &RubiconRowData::is_of_value);
     ClassDB::bind_static_method("RubiconRowData", D_METHOD("compare_rows", "a", "b"), &RubiconRowData::compare_rows);

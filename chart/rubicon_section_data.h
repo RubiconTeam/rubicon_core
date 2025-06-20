@@ -3,7 +3,7 @@
 
 #include "core/io/resource.h"
 #include "rubicon_time_change.h"
-#include "rubicon_sv_change.h"
+#include "rubicon_scroll_velocity.h"
 #include "rubicon_row_data.h"
 
 template <typename T>
@@ -24,7 +24,7 @@ public:
     void set_rows(const TypedArray<RubiconRowData> &p_rows);
     TypedArray<RubiconRowData> get_rows() const;
 
-    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconSvChange> &p_sv_changes);
+    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities);
     
     Ref<RubiconRowData> add_row(uint8_t p_offset, uint8_t p_quant);
     void remove_row(const Ref<RubiconRowData> p_row);

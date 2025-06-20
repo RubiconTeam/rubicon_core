@@ -1,6 +1,6 @@
 #include "rubichart_loader.h"
 #include "rubicon_chart_data.h"
-#include "rubicon_sv_change.h"
+#include "rubicon_scroll_velocity.h"
 #include "core/variant/typed_dictionary.h"
 #include "core/variant/variant_utility.h"
 
@@ -68,13 +68,13 @@ Ref<RubiChart> RubiChartLoader::convert(const Ref<FileAccess> p_reader, const in
             //p_reader->seek(p_reader->get_position() + int32_t(p_reader->get_32()));
         }
 
-        int sv_change_count = int32_t(p_reader->get_32());
+        int sv_count = int32_t(p_reader->get_32());
         //print_line("sv changes count: "+String::num_int64(sv_change_count));
-        for (s = 0; s < sv_change_count; s++) {
-            Ref<RubiconSvChange> sv_change = memnew(RubiconSvChange);
-            sv_change->time = p_reader->get_float();
-            sv_change->multiplier = p_reader->get_float();
-            chart_data->sv_changes.push_back(sv_change);
+        for (s = 0; s < sv_count; s++) {
+            Ref<RubiconScrollVelocity> sv = memnew(RubiconScrollVelocity);
+            sv->time = p_reader->get_float();
+            sv->multiplier = p_reader->get_float();
+            chart_data->scroll_velocities.push_back(sv);
         }
 
         TypedDictionary<uint8_t, RubiconNoteData> hold_note_cache;

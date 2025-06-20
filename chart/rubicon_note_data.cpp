@@ -97,7 +97,7 @@ bool RubiconNoteData::get_internal_counts_towards_score() const {
     return internal_counts_towards_score;
 }
 
-void RubiconNoteData::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconSvChange> &p_sv_changes) {
+void RubiconNoteData::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities) {
     if (!starting_row.is_null()) {
         measure_time = starting_row->section->measure + (float(starting_row->offset) / float(starting_row->quant));
         measure_length = !ending_row.is_null() ? (ending_row->section->measure + (float(ending_row->offset) / float(ending_row->quant))) - measure_time : 0.0f;
@@ -116,9 +116,9 @@ void RubiconNoteData::convert_data(const TypedArray<RubiconTimeChange> &p_time_c
 
     bool found_start = false;
     bool found_end = false;
-    starting_scroll_velocity = ending_scroll_velocity = p_sv_changes.size() - 1;
-    for (i = 0; i < p_sv_changes.size(); i++) {
-        Ref<RubiconSvChange> cur_change = p_sv_changes[i];
+    starting_scroll_velocity = ending_scroll_velocity = p_velocities.size() - 1;
+    for (i = 0; i < p_velocities.size(); i++) {
+        Ref<RubiconScrollVelocity> cur_change = p_velocities[i];
         if (cur_change->time > measure_time && !found_start) {
             starting_scroll_velocity = i - 1;
             found_start = true;
@@ -214,7 +214,7 @@ void RubiconNoteData::_bind_methods() {
     ClassDB::bind_method("get_ending_row", &RubiconNoteData::get_ending_row);
 
     // Methods
-    ClassDB::bind_method(D_METHOD("convert_data", "time_changes", "sv_changes"), &RubiconNoteData::convert_data);
+    ClassDB::bind_method(D_METHOD("convert_data", "time_changes", "velocities"), &RubiconNoteData::convert_data);
     
     ClassDB::bind_static_method("RubiconNoteData", D_METHOD("comapre_notes_by_time", "a", "b"), &RubiconNoteData::compare_notes_by_time);
     ClassDB::bind_static_method("RubiconNoteData", D_METHOD("compare_notes_by_lane", "a", "b"), &RubiconNoteData::compare_notes_by_lane);

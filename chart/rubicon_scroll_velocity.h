@@ -1,5 +1,5 @@
-#ifndef RUBICON_SV_CHANGE_H
-#define RUBICON_SV_CHANGE_H
+#ifndef RUBICON_SCROLL_VELOCITY_H
+#define RUBICON_SCROLL_VELOCITY_H
 
 #include "core/io/resource.h"
 
@@ -10,8 +10,8 @@
 template <typename T>
 class TypedArray;
 
-class RubiconSvChange : public Resource {
-    GDCLASS(RubiconSvChange, Resource);
+class RubiconScrollVelocity : public Resource {
+    GDCLASS(RubiconScrollVelocity, Resource);
 
 public:
     float time = 0.0f;
@@ -29,10 +29,10 @@ public:
     float get_ms_time() const;
     float get_position() const;
 
-    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const Ref<RubiconSvChange> p_previous_change = Ref<RubiconSvChange>());
+    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const Ref<RubiconScrollVelocity> p_previous = Ref<RubiconScrollVelocity>());
 
 protected:
     static void _bind_methods();
 };
 
-#endif // RUBICON_SV_CHANGE_H
+#endif // RUBICON_SCROLL_VELOCITY_H

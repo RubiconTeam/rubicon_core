@@ -17,11 +17,11 @@ TypedArray<RubiconRowData> RubiconSectionData::get_rows() const {
     return rows;
 }
 
-void RubiconSectionData::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconSvChange> &p_sv_changes) {
+void RubiconSectionData::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities) {
     for (int r = 0; r < rows.size(); r++) {
         Ref<RubiconRowData> cur = rows[r];
         cur->section = this;
-        cur->convert_data(p_time_changes, p_sv_changes);
+        cur->convert_data(p_time_changes, p_velocities);
     }
 }
 
@@ -127,7 +127,7 @@ void RubiconSectionData::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::INT, "measure"), "set_measure", "get_measure");
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "rows", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconRowData")), "set_rows", "get_rows");
 
-    ClassDB::bind_method(D_METHOD("convert_data", "time_changes", "sv_changes"), &RubiconSectionData::convert_data);
+    ClassDB::bind_method(D_METHOD("convert_data", "time_changes", "velocities"), &RubiconSectionData::convert_data);
     
     ClassDB::bind_method(D_METHOD("add_row", "offset", "quant"), &RubiconSectionData::add_row);
     ClassDB::bind_method(D_METHOD("remove_row", "row"), &RubiconSectionData::remove_row);

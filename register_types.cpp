@@ -8,7 +8,7 @@
 #include "chart/rubicon_row_data.h"
 #include "chart/rubichart.h"
 #include "chart/rubicon_section_data.h"
-#include "chart/rubicon_sv_change.h"
+#include "chart/rubicon_scroll_velocity.h"
 #include "chart/rubicon_time_change.h"
 #include "chart/rubicon_chart_data.h"
 #include "meta/rubicon_event_data.h"
@@ -39,7 +39,7 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(RubiconNoteData);
 	GDREGISTER_CLASS(RubiconRowData);
 	GDREGISTER_CLASS(RubiconSectionData);
-	GDREGISTER_CLASS(RubiconSvChange);
+	GDREGISTER_CLASS(RubiconScrollVelocity);
 	GDREGISTER_CLASS(RubiconTimeChange); 
 	GDREGISTER_CLASS(RubiconChartData);
 	GDREGISTER_CLASS(RubiChart);

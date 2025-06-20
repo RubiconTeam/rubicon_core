@@ -5,7 +5,7 @@
 #include "core/object/class_db.h"
 #include "core/variant/typed_array.h"
 #include "core/string/string_name.h"
-#include "rubicon_sv_change.h"
+#include "rubicon_scroll_velocity.h"
 #include "rubicon_section_data.h"
 #include "rubicon_note_data.h"
 
@@ -20,7 +20,7 @@ class RubiconChartData : public Resource {
 public:
     StringName chart_name = "";
     uint8_t lanes = 0;
-    TypedArray<RubiconSvChange> sv_changes;
+    TypedArray<RubiconScrollVelocity> scroll_velocities;
 
     TypedArray<RubiconSectionData> sections;
     TypedArray<RubiconNoteData> strays;
@@ -29,8 +29,8 @@ public:
     StringName get_chart_name() const;
     void set_lanes(const uint8_t p_lanes);
     uint8_t get_lanes() const;
-    void set_sv_changes(const TypedArray<RubiconSvChange> &p_value);
-    TypedArray<RubiconSvChange> get_sv_changes() const;
+    void set_scroll_velocities(const TypedArray<RubiconScrollVelocity> &p_value);
+    TypedArray<RubiconScrollVelocity> get_scroll_velocities() const;
 
     void set_sections(const TypedArray<RubiconSectionData> &p_value);
     TypedArray<RubiconSectionData> get_sections() const;

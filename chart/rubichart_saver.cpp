@@ -108,12 +108,12 @@ void RubiChartSaver::save(const Ref<RubiChart> chart, Ref<FileAccess> writer) {
 
         writer->store_32(chart_data->lanes);
 
-        writer->store_32(chart_data->sv_changes.size());
+        writer->store_32(chart_data->scroll_velocities.size());
         int s;
-        for (s = 0; s < chart_data->sv_changes.size(); s++) {
-            Ref<RubiconSvChange> sv_change = chart_data->sv_changes[s];
-            writer->store_float(sv_change->time);
-            writer->store_float(sv_change->multiplier);
+        for (s = 0; s < chart_data->scroll_velocities.size(); s++) {
+            Ref<RubiconScrollVelocity> sv = chart_data->scroll_velocities[s];
+            writer->store_float(sv->time);
+            writer->store_float(sv->multiplier);
         }
 
         writer->store_32(chart_data->sections.size());

@@ -18,12 +18,12 @@ uint8_t RubiconChartData::get_lanes() const {
     return lanes;
 }
 
-void RubiconChartData::set_sv_changes(const TypedArray<RubiconSvChange> &p_value) {
-    sv_changes = p_value;
+void RubiconChartData::set_scroll_velocities(const TypedArray<RubiconScrollVelocity> &p_value) {
+    scroll_velocities = p_value;
 }
 
-TypedArray<RubiconSvChange> RubiconChartData::get_sv_changes() const {
-    return sv_changes;
+TypedArray<RubiconScrollVelocity> RubiconChartData::get_scroll_velocities() const {
+    return scroll_velocities;
 }
 
 void RubiconChartData::set_sections(const TypedArray<RubiconSectionData> &p_value) {
@@ -241,19 +241,19 @@ void RubiconChartData::cleanup_sections() {
 
 void RubiconChartData::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes) {
     int s;
-    for (s = 0; s < sv_changes.size(); s++) {
-        Ref<RubiconSvChange> sv_change = sv_changes[s];
-        sv_change->convert_data(p_time_changes, sv_changes[s - 1]);
+    for (s = 0; s < scroll_velocities.size(); s++) {
+        Ref<RubiconScrollVelocity> sv = scroll_velocities[s];
+        sv->convert_data(p_time_changes, scroll_velocities[s - 1]);
     }
 
     for (s = 0; s < sections.size(); s++) {
         Ref<RubiconSectionData> section = sections[s];
-        section->convert_data(p_time_changes, sv_changes);
+        section->convert_data(p_time_changes, scroll_velocities);
     }
 
     for (s = 0; s < strays.size(); s++) {
         Ref<RubiconNoteData> stray = strays[s];
-        stray->convert_data(p_time_changes, sv_changes);
+        stray->convert_data(p_time_changes, scroll_velocities);
     }
 }
 
@@ -287,8 +287,8 @@ void RubiconChartData::_bind_methods() {
     ClassDB::bind_method("get_chart_name", &RubiconChartData::get_chart_name);
     ClassDB::bind_method(D_METHOD("set_lanes", "value"), &RubiconChartData::set_lanes);
     ClassDB::bind_method("get_lanes", &RubiconChartData::get_lanes);
-    ClassDB::bind_method(D_METHOD("set_sv_changes", "value"), &RubiconChartData::set_sv_changes);
-    ClassDB::bind_method("get_sv_changes", &RubiconChartData::get_sv_changes);
+    ClassDB::bind_method(D_METHOD("set_scroll_velocities", "value"), &RubiconChartData::set_scroll_velocities);
+    ClassDB::bind_method("get_scroll_velocities", &RubiconChartData::get_scroll_velocities);
     ClassDB::bind_method(D_METHOD("set_sections", "value"), &RubiconChartData::set_sections);
     ClassDB::bind_method("get_sections", &RubiconChartData::get_sections);
     ClassDB::bind_method(D_METHOD("set_strays", "value"), &RubiconChartData::set_strays);
@@ -297,7 +297,7 @@ void RubiconChartData::_bind_methods() {
     // Properties
     ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "chart_name"), "set_chart_name", "get_chart_name");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "lanes"), "set_lanes", "get_lanes");
-    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "sv_changes", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconSvChange")), "set_sv_changes", "get_sv_changes");
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "scroll_velocities", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconScrollVelocity")), "set_scroll_velocity", "get_scroll_velocity");
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "sections", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconSectionData")), "set_sections", "get_sections");
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "strays", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconNoteData")), "set_strays", "get_strays");
 
