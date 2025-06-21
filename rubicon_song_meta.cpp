@@ -1,5 +1,5 @@
 #include "rubicon_song_meta.h"
-#include "../rubicon_conductor.h"
+#include "rubicon_conductor.h"
 
 void RubiconSongMeta::set_song_name(const String p_name) {
     name = p_name;
@@ -33,13 +33,13 @@ Ref<AudioStream> RubiconSongMeta::get_vocals() const {
     return vocals;
 }
 
-void RubiconSongMeta::set_difficulties(const TypedArray<RubiconSongDifficulty> p_difficulties) {
+/*void RubiconSongMeta::set_difficulties(const TypedArray<RubiconSongDifficulty> p_difficulties) {
     difficulties = p_difficulties;
 }
 
 TypedArray<RubiconSongDifficulty> RubiconSongMeta::get_difficulties() const {
     return difficulties;
-}
+}*/
 
 void RubiconSongMeta::set_event_meta(const Ref<RubiconEventMeta> p_event_meta) {
     event_meta = p_event_meta;
@@ -73,7 +73,7 @@ String RubiconSongMeta::get_ui_style() const {
     return ui_style;
 }
 
-void RubiconSongMeta::set_stages(const PackedStringArray p_stages) {
+/*void RubiconSongMeta::set_stages(const PackedStringArray p_stages) {
     stages = p_stages;
 }
 
@@ -110,6 +110,14 @@ TypedArray<RubiconCharacterMeta> RubiconSongMeta::get_default_characters() {
     default_characters.push_back(default_opponent);
 
     return default_characters;
+}*/
+
+void RubiconSongMeta::set_song_scene_path(const String p_song_scene_path) {
+    song_scene_path = p_song_scene_path;
+}
+
+String RubiconSongMeta::get_song_scene_path() const {
+    return song_scene_path;
 }
 
 void RubiconSongMeta::set_audio_start_offset(const float p_audio_start_offset) {
@@ -139,7 +147,7 @@ Ref<RubiconSongMeta> RubiconSongMeta::convert_data() {
     return this;
 }
 
-bool RubiconSongMeta::find_index(const Variant &p_a, const Variant &p_b) {
+/*bool RubiconSongMeta::find_index(const Variant &p_a, const Variant &p_b) {
     // figure this out later ig
     return true;
 }
@@ -171,7 +179,7 @@ Ref<RubiconSongDifficulty> RubiconSongMeta::get_difficulty_by_name(const String 
         return nullptr;
     
     return get_difficulty_by_index(idx);
-}
+}*/
 
 void RubiconSongMeta::_bind_methods() {
     // Binding methods
@@ -187,8 +195,8 @@ void RubiconSongMeta::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_vocals", "vocals"), &RubiconSongMeta::set_vocals);
     ClassDB::bind_method("get_vocals", &RubiconSongMeta::get_vocals);
     
-    ClassDB::bind_method(D_METHOD("set_difficulties", "difficulties"), &RubiconSongMeta::set_difficulties);
-    ClassDB::bind_method("get_difficulties", &RubiconSongMeta::get_difficulties);
+    /*ClassDB::bind_method(D_METHOD("set_difficulties", "difficulties"), &RubiconSongMeta::set_difficulties);
+    ClassDB::bind_method("get_difficulties", &RubiconSongMeta::get_difficulties);*/
 
     ClassDB::bind_method(D_METHOD("set_event_meta", "event_meta"), &RubiconSongMeta::set_event_meta);
     ClassDB::bind_method("get_event_meta", &RubiconSongMeta::get_event_meta);
@@ -202,11 +210,14 @@ void RubiconSongMeta::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_ui_style", "ui_style"), &RubiconSongMeta::set_ui_style);
     ClassDB::bind_method("get_ui_style", &RubiconSongMeta::get_ui_style);
 
-    ClassDB::bind_method(D_METHOD("set_stages", "stages"), &RubiconSongMeta::set_stages);
+    /*ClassDB::bind_method(D_METHOD("set_stages", "stages"), &RubiconSongMeta::set_stages);
     ClassDB::bind_method("get_stages", &RubiconSongMeta::get_stages);
     
     ClassDB::bind_method(D_METHOD("set_characters", "characters"), &RubiconSongMeta::set_characters);
-    ClassDB::bind_method("get_characters", &RubiconSongMeta::get_characters);
+    ClassDB::bind_method("get_characters", &RubiconSongMeta::get_characters);*/
+
+    ClassDB::bind_method(D_METHOD("set_song_scene_path", "song_scene_path"), &RubiconSongMeta::set_song_scene_path);
+    ClassDB::bind_method("get_song_scene_path", &RubiconSongMeta::get_song_scene_path);
 
     ClassDB::bind_method(D_METHOD("set_audio_start_offset", "audio_start_offset"), &RubiconSongMeta::set_audio_start_offset);
     ClassDB::bind_method("get_audio_start_offset", &RubiconSongMeta::get_audio_start_offset);
@@ -219,13 +230,14 @@ void RubiconSongMeta::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "artist"), "set_artist", "get_artist");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "instrumental", PROPERTY_HINT_RESOURCE_TYPE, "AudioStream"), "set_instrumental", "get_instrumental");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "vocals", PROPERTY_HINT_RESOURCE_TYPE, "AudioStream"), "set_vocals", "get_vocals");
-    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "difficulties", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconSongDifficulty")), "set_difficulties", "get_difficulties");
+    //ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "difficulties", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconSongDifficulty")), "set_difficulties", "get_difficulties");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "event_meta", PROPERTY_HINT_RESOURCE_TYPE, "RubiconEventMeta"), "set_event_meta", "get_event_meta");
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "time_changes", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconTimeChange")), "set_time_changes", "get_time_changes");
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "modules"), "set_modules", "get_modules");
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "ui_style"), "set_ui_style", "get_ui_style");
-    ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "stages"), "set_stages", "get_stages");
-    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "characters", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconCharacterMeta")), "set_characters", "get_characters");
+    /*ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "stages"), "set_stages", "get_stages");
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "characters", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconCharacterMeta")), "set_characters", "get_characters");*/
+    ADD_PROPERTY(PropertyInfo(Variant::STRING, "song_scene_path", PROPERTY_HINT_FILE, "*.tscn,*.scn"), "set_song_scene_path", "get_song_scene_path");
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "audio_start_offset"), "set_audio_start_offset", "get_audio_start_offset");
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "playable_charts"), "set_playable_charts", "get_playable_charts");
 }

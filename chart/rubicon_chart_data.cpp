@@ -297,7 +297,7 @@ void RubiconChartData::_bind_methods() {
     // Properties
     ADD_PROPERTY(PropertyInfo(Variant::STRING_NAME, "chart_name"), "set_chart_name", "get_chart_name");
     ADD_PROPERTY(PropertyInfo(Variant::INT, "lanes"), "set_lanes", "get_lanes");
-    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "scroll_velocities", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconScrollVelocity")), "set_scroll_velocity", "get_scroll_velocity");
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "scroll_velocities", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconScrollVelocity")), "set_scroll_velocities", "get_scroll_velocities");
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "sections", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconSectionData")), "set_sections", "get_sections");
     ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "strays", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconNoteData")), "set_strays", "get_strays");
 

@@ -11,10 +11,10 @@
 #include "chart/rubicon_scroll_velocity.h"
 #include "chart/rubicon_time_change.h"
 #include "chart/rubicon_chart_data.h"
-#include "meta/rubicon_event_data.h"
-#include "meta/rubicon_event_meta.h"
-#include "meta/rubicon_song_difficulty.h"
-#include "meta/rubicon_song_meta.h"
+#include "modules/rubicon_engine/events/rubicon_event_data.h"
+#include "modules/rubicon_engine/events/rubicon_event_meta.h"
+//#include "meta/rubicon_song_difficulty.h"
+#include "rubicon_song_meta.h"
 
 static RubiconCore *CorePtr;
 static RubiconConductor *ConductorPtr;
@@ -47,9 +47,8 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	// Rubicon.Core.Meta
 	GDREGISTER_CLASS(RubiconEventData);
 	GDREGISTER_CLASS(RubiconEventMeta);
-	GDREGISTER_CLASS(RubiconSongDifficulty);
+	//GDREGISTER_CLASS(RubiconSongDifficulty);
 	GDREGISTER_CLASS(RubiconSongMeta);
-	GDREGISTER_CLASS(RubiconCharacterMeta);
 
 	// Rubicon Chart Loader/Saver
 	rubicon_chart_loader.instantiate();
