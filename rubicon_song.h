@@ -17,7 +17,7 @@ public:
     void set_song_meta(const Ref<RubiconSongMeta> p_song_meta);
     Ref<RubiconSongMeta> get_song_meta() const;
 
-    void set_playfield(const Control* p_playfield);
+    void set_playfield(Control* p_playfield);
     Control* get_playfield() const;
 
 protected:

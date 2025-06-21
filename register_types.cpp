@@ -15,6 +15,7 @@
 #include "modules/rubicon_engine/events/rubicon_event_meta.h"
 //#include "meta/rubicon_song_difficulty.h"
 #include "rubicon_song_meta.h"
+#include "rubicon_song.h"
 
 static RubiconCore *CorePtr;
 static RubiconConductor *ConductorPtr;
@@ -34,6 +35,8 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(RubiconCore);
 	CorePtr = memnew(RubiconCore);
 	Engine::get_singleton()->add_singleton(Engine::Singleton("RubiconCore", RubiconCore::get_singleton()));  
+
+	GDREGISTER_CLASS(RubiconSong);
 
 	// Rubicon.Core.Chart
 	GDREGISTER_CLASS(RubiconNoteData);
