@@ -1,13 +1,11 @@
 #ifndef RUBICON_TIME_CHANGE_H
 #define RUBICON_TIME_CHANGE_H
 
-#include "core/object/ref_counted.h"
 #include "core/io/resource.h"
-
 #include "core/object/class_db.h"
 
-class RubiconTimeChange : public RefCounted {
-    GDCLASS(RubiconTimeChange, RefCounted);
+class RubiconTimeChange : public Resource {
+    GDCLASS(RubiconTimeChange, Resource);
 
 public:
     float time = 0.0f;
