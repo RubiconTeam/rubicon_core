@@ -18,7 +18,6 @@
 #include "rubicon_song.h"
 
 static RubiconCore *CorePtr;
-static RubiconConductor *ConductorPtr;
 
 static Ref<RubiconChartLoader> rubicon_chart_loader;
 static Ref<RubiconChartSaver> rubicon_chart_saver;
@@ -29,14 +28,12 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 
 	// Rubicon.Core
     GDREGISTER_CLASS(RubiconConductor);
-    ConductorPtr = memnew(RubiconConductor);
-    Engine::get_singleton()->add_singleton(Engine::Singleton("RubiconConductor", RubiconConductor::get_singleton()));  
 
 	GDREGISTER_CLASS(RubiconCore);
 	CorePtr = memnew(RubiconCore);
 	Engine::get_singleton()->add_singleton(Engine::Singleton("RubiconCore", RubiconCore::get_singleton()));  
 
-	GDREGISTER_CLASS(RubiconSong);
+	//GDREGISTER_CLASS(RubiconSong);
 
 	// Rubicon.Core.Chart
 	GDREGISTER_CLASS(RubiconNoteData);
@@ -64,9 +61,6 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 void uninitialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
-
-    Engine::get_singleton()->remove_singleton("RubiconConductor");
-	memdelete(ConductorPtr);
 
 	Engine::get_singleton()->remove_singleton("RubiconCore");
 	memdelete(CorePtr);

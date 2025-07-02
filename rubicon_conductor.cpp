@@ -3,12 +3,6 @@
 #include "core/variant/callable.h"
 #include "core/os/time.h"
 
-RubiconConductor *RubiconConductor::singleton = nullptr;
-
-RubiconConductor *RubiconConductor::get_singleton() {
-	return singleton;
-}
-
 void RubiconConductor::set_time_change_index(const int p_time_change_index) {
     time_change_index = p_time_change_index;
 }
@@ -17,24 +11,13 @@ int RubiconConductor::get_time_change_index() const {
     return time_change_index;
 }
 
-void RubiconConductor::set_offset(const float p_offset) {
-    offset = p_offset;
-}
-
-float RubiconConductor::get_offset() const {
-    return offset;
-}
-
-void RubiconConductor::set_speed(const float p_speed) {
-    speed = p_speed;
-}
-
-float RubiconConductor::get_speed() const {
-    return speed;
-}
-
 void RubiconConductor::set_playing(const bool p_playing) {
+    if (!_validate_time_change_list())
+        return;
+
+    _time = get_time();
     playing = p_playing;
+    set_time(_time);
 }
 
 bool RubiconConductor::get_playing() const {
@@ -42,102 +25,47 @@ bool RubiconConductor::get_playing() const {
 }
 
 void RubiconConductor::set_time(const float p_time) {
-    set_audio_time(p_time / speed);
-}
+    float old_time = _time;
 
-float RubiconConductor::get_time() const {
-    return get_audio_time() * speed;
-}
-
-void RubiconConductor::set_audio_time(const float p_time) {
     _time = p_time;
     _relative_start_time = Time::get_singleton()->get_unix_time_from_system();
     _relative_time_offset = p_time;
 
-    _last_measure = int32_t(Math::floor(get_current_measure()));
-    _last_beat = int32_t(Math::floor(get_current_beat()));
-    _last_step = int32_t(Math::floor(get_current_step()));
+    _time_changed(_time - old_time);
 }
 
-float RubiconConductor::get_audio_time() const {
-    return offset + (playing ? float_t(Time::get_singleton()->get_unix_time_from_system() - _relative_start_time + _relative_time_offset) : _time != 0.0 ? float_t(_time) : 0.0f);
+float RubiconConductor::get_time() const {
+    return playing ? float_t(Time::get_singleton()->get_unix_time_from_system() - _relative_start_time + _relative_time_offset) : _time;
 }
 
-void RubiconConductor::set_time_changes(const TypedArray<RubiconTimeChange> &p_time_changes) {
-    _time_changes = p_time_changes;
+void RubiconConductor::set_time_change_list(const TypedArray<RubiconTimeChange> &p_time_changes) {
+    _time_change_list = p_time_changes;
     time_change_index = 0;
     emit_signal(SNAME("time_change_reached"), get_current_time_change());
 }
 
-TypedArray<RubiconTimeChange> RubiconConductor::get_time_changes() const {
-    return _time_changes;
-}
-
-void RubiconConductor::run_callbacks() {
-    if (!playing) 
-        return;
-
-    while (time_change_index < _time_changes.size() - 1) {
-        Ref<RubiconTimeChange> next_time_change = _time_changes[time_change_index + 1];
-        if (next_time_change->ms_time / 1000.0f > get_time())
-            break;
-            
-        time_change_index++;
-        
-        emit_signal(SNAME("time_change_reached"), next_time_change);
-    }
-
-    int cur_measure = int32_t(Math::floor(get_current_measure()));
-    int cur_beat = int32_t(Math::floor(get_current_beat()));
-    int cur_step = int32_t(Math::floor(get_current_step()));
-
-    int i = 0;
-    if (cur_measure != _last_measure)
-        for (i = _last_measure + 1; i <= cur_measure; i++)
-            emit_signal(SNAME("measure_hit"), i);
-    
-    if (cur_beat != _last_beat)
-        for (i = _last_beat + 1; i <= cur_beat; i++)
-            emit_signal(SNAME("beat_hit"), i);
-
-    if (cur_step != _last_step)
-        for (i = _last_step + 1; i <= cur_step; i++)
-            emit_signal(SNAME("step_hit"), i);
-    
-    _last_measure = cur_measure;
-    _last_beat = cur_beat;
-    _last_step = cur_step;
+TypedArray<RubiconTimeChange> RubiconConductor::get_time_change_list() const {
+    return _time_change_list;
 }
 
 void RubiconConductor::play(const float p_time) {
     set_time(p_time);
-    resume();
-}
-
-void RubiconConductor::resume() {
     playing = true;
 }
 
-void RubiconConductor::pause() {
-    _time = get_audio_time();
+void RubiconConductor::stop() {
+    _time = 0.0;
     playing = false;
 }
 
-void RubiconConductor::stop() {
-    set_time(0.0);
-    pause();
-}
-
 void RubiconConductor::reset() {
-    _time_changes.clear();
+    _time_change_list.clear();
     time_change_index = 0;
-    offset = 0;
-    speed = 1.0f;
     stop();
 }
 
 float RubiconConductor::get_current_step() {
-    if (_time_changes.is_empty())
+    if (_time_change_list.is_empty())
         return 0.0f;
 
     float time = get_time();
@@ -145,7 +73,7 @@ float RubiconConductor::get_current_step() {
         return _cached_step;
 
     Ref<RubiconTimeChange> time_change = get_current_time_change();
-    if (_time_changes.size() <= 1)
+    if (_time_change_list.size() <= 1)
         return time / (60.0f / (time_change->bpm * time_change->time_signature_denominator));
     
     _cached_step_time = time;
@@ -154,7 +82,7 @@ float RubiconConductor::get_current_step() {
 }
 
 float RubiconConductor::get_current_beat() {
-    if (_time_changes.is_empty())
+    if (_time_change_list.is_empty())
         return 0.0f;
 
     float time = get_time();
@@ -162,7 +90,7 @@ float RubiconConductor::get_current_beat() {
         return _cached_beat;
     
     Ref<RubiconTimeChange> time_change = get_current_time_change();
-    if (_time_changes.size() <= 1)
+    if (_time_change_list.size() <= 1)
         return time / (60.0f / time_change->bpm);
     
     _cached_beat_time = time;
@@ -171,7 +99,7 @@ float RubiconConductor::get_current_beat() {
 }
 
 float RubiconConductor::get_current_measure() {
-    if (_time_changes.is_empty())
+    if (_time_change_list.is_empty())
         return 0.0f;
 
     float time = get_time();
@@ -179,7 +107,7 @@ float RubiconConductor::get_current_measure() {
         return _cached_measure;
     
     Ref<RubiconTimeChange> time_change = get_current_time_change();
-    if (_time_changes.size() <= 1)
+    if (_time_change_list.size() <= 1)
         return time / (60.0f / (time_change->bpm / time_change->time_signature_numerator));
     
     _cached_measure_time = time;
@@ -188,10 +116,10 @@ float RubiconConductor::get_current_measure() {
 }
 
 Ref<RubiconTimeChange> RubiconConductor::get_current_time_change() {
-    if (_time_changes.is_empty())
+    if (_time_change_list.is_empty())
         return Ref<RubiconTimeChange>();
 
-    return _time_changes[time_change_index];
+    return _time_change_list[time_change_index];
 }
 
 float RubiconConductor::measure_to_ms(float p_measure, float p_bpm, float p_time_signature_numerator)  {
@@ -287,39 +215,114 @@ float RubiconConductor::ms_to_measures(float p_ms_time, const TypedArray<Rubicon
     return time_change->time + (offset / measure_value);
 }
 
+void RubiconConductor::_notification(int p_what) {
+    switch (p_what) {
+        case NOTIFICATION_INTERNAL_PROCESS: {
+            if (!playing) 
+                return;
+
+            float cur_time = get_time();
+            _time_changed(cur_time - _time);
+            _time = cur_time;
+        } break;
+    }
+}
+
+void RubiconConductor::_time_changed(float delta) {
+    int sign = SIGN(delta);
+    if (sign == 0)
+        return;
+    
+    int i;
+    int cur_measure = int32_t(Math::floor(get_current_measure()));
+    int cur_beat = int32_t(Math::floor(get_current_beat()));
+    int cur_step = int32_t(Math::floor(get_current_step()));
+    if (sign == 1) { // Going forward
+        while (time_change_index < _time_change_list.size() - 1) {
+            Ref<RubiconTimeChange> next_time_change = _time_change_list[time_change_index + 1];
+            if (next_time_change->ms_time / 1000.0f > get_time())
+                break;
+                    
+            time_change_index++; 
+                
+            emit_signal(SNAME("time_change_reached"), next_time_change);
+        }
+
+        if (cur_measure != _last_measure)
+            for (i = _last_measure + 1; i <= cur_measure; i++)
+                emit_signal(SNAME("measure_hit"), i);
+    
+        if (cur_beat != _last_beat)
+            for (i = _last_beat + 1; i <= cur_beat; i++)
+                emit_signal(SNAME("beat_hit"), i);
+
+        if (cur_step != _last_step)
+            for (i = _last_step + 1; i <= cur_step; i++)
+                emit_signal(SNAME("step_hit"), i);
+    }
+
+    if (sign == -1) { // Going backward
+        while (time_change_index > 0) {
+            Ref<RubiconTimeChange> prev_time_change = _time_change_list[time_change_index - 1];
+            if (prev_time_change->ms_time / 1000.0f < get_time())
+                break;
+            
+            time_change_index--;
+                
+            emit_signal(SNAME("time_change_reached"), prev_time_change);
+        }
+
+        if (cur_measure != _last_measure)
+            for (i = _last_measure - 1; i >= cur_measure; i--)
+                emit_signal(SNAME("measure_hit"), i);
+    
+        if (cur_beat != _last_beat)
+            for (i = _last_beat - 1; i >= cur_beat; i--)
+                emit_signal(SNAME("beat_hit"), i);
+
+        if (cur_step != _last_step)
+            for (i = _last_step - 1; i >= cur_step; i--)
+                emit_signal(SNAME("step_hit"), i);
+    }
+
+    _last_measure = cur_measure;
+    _last_beat = cur_beat;
+    _last_step = cur_step;
+}
+
+bool RubiconConductor::_validate_time_change_list() const {
+    ERR_FAIL_COND_V_MSG(_time_change_list.size() == 0, false, "Time change list needs to have at least one time change!");
+    
+    for (int i = 0; i < _time_change_list.size(); i++) {
+        Ref<RubiconTimeChange> current = _time_change_list[i];
+        ERR_FAIL_COND_V_MSG(current.is_null() || !current.is_valid(), false, "One of your time changes is either null or not valid.");
+    }
+
+    return true;
+}
+
 void RubiconConductor::_bind_methods() {
     // Getters and Setters
-    ClassDB::bind_method(D_METHOD("set_time_change_index", "time_change_index"), &RubiconConductor::set_time_change_index);
-    ClassDB::bind_method("get_time_change_index", &RubiconConductor::get_time_change_index);
-    ClassDB::bind_method(D_METHOD("set_offset", "offset"), &RubiconConductor::set_offset);
-    ClassDB::bind_method("get_offset", &RubiconConductor::get_offset);
-    ClassDB::bind_method(D_METHOD("set_speed", "speed"), &RubiconConductor::set_speed);
-    ClassDB::bind_method("get_speed", &RubiconConductor::get_speed);
-    ClassDB::bind_method(D_METHOD("set_playing", "playing"), &RubiconConductor::set_playing);
-    ClassDB::bind_method("get_playing", &RubiconConductor::get_playing);
     ClassDB::bind_method(D_METHOD("set_time", "time"), &RubiconConductor::set_time);
     ClassDB::bind_method("get_time", &RubiconConductor::get_time);
-    ClassDB::bind_method(D_METHOD("set_audio_time", "time"), &RubiconConductor::set_audio_time);
-    ClassDB::bind_method("get_audio_time", &RubiconConductor::get_audio_time);
-    ClassDB::bind_method(D_METHOD("set_time_changes", "time_changes"), &RubiconConductor::set_time_changes);
-    ClassDB::bind_method("get_time_changes", &RubiconConductor::get_time_changes);
+    ClassDB::bind_method(D_METHOD("set_playing", "playing"), &RubiconConductor::set_playing);
+    ClassDB::bind_method("get_playing", &RubiconConductor::get_playing);
+    ClassDB::bind_method(D_METHOD("set_time_change_index", "time_change_index"), &RubiconConductor::set_time_change_index);
+    ClassDB::bind_method("get_time_change_index", &RubiconConductor::get_time_change_index);
+    ClassDB::bind_method(D_METHOD("set_time_change_list", "time_changes"), &RubiconConductor::set_time_change_list);
+    ClassDB::bind_method("get_time_change_list", &RubiconConductor::get_time_change_list);
 
     // Properties
-    ADD_PROPERTY(PropertyInfo(Variant::INT, "time_change_index"), "set_time_change_index", "get_time_change_index");
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "offset"), "set_offset", "get_offset");
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "speed"), "set_speed", "get_speed");
-    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "playing"), "set_playing", "get_playing");
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "time"), "set_time", "get_time");
-    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "audio_time"), "set_audio_time", "get_audio_time");
-    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "time_changes"), "set_time_changes", "get_time_changes");
+    ADD_PROPERTY(PropertyInfo(Variant::BOOL, "playing", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_playing", "get_playing");
+
+    ADD_GROUP("Time Changes", "time_change_");
+    ADD_PROPERTY(PropertyInfo(Variant::INT, "time_change_index"), "set_time_change_index", "get_time_change_index");
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "time_change_list", PROPERTY_HINT_RESOURCE_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconTimeChange")), "set_time_change_list", "get_time_change_list");
 
     // Methods
-    ClassDB::bind_method("run_callbacks", &RubiconConductor::run_callbacks);
-    
     ClassDB::bind_method(D_METHOD("play", "time"), &RubiconConductor::play);
-    ClassDB::bind_method("resume", &RubiconConductor::resume);
-    ClassDB::bind_method("pause", &RubiconConductor::pause);
-    ClassDB::bind_method("stop", &RubiconConductor::resume);
+    ClassDB::bind_method("stop", &RubiconConductor::stop);
 
     ClassDB::bind_method("get_current_time_change", &RubiconConductor::get_current_time_change);
 
@@ -345,14 +348,4 @@ void RubiconConductor::_bind_methods() {
     ADD_SIGNAL(MethodInfo("step_hit", PropertyInfo(Variant::INT, "step")));
     ADD_SIGNAL(MethodInfo("measure_hit", PropertyInfo(Variant::INT, "measure")));
     ADD_SIGNAL(MethodInfo("time_change_reached", PropertyInfo(Variant::INT, "time_change")));
-}
-
-RubiconConductor::RubiconConductor() {
-	singleton = this;
-}
-
-RubiconConductor::~RubiconConductor() {
-	if (singleton == this) {
-		singleton = nullptr;
-	}
 }
