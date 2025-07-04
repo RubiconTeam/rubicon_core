@@ -75,9 +75,9 @@ private:
 
 	TypedArray<RubiconTimeChange> _time_change_list;
 	
-	int _last_beat = -2147483648;
-	int _last_step = -2147483648;
-	int _last_measure = -2147483648;
+	int _last_beat = 0;
+	int _last_step = 0;
+	int _last_measure = 0;
 
     void _time_changed(float delta);
     bool _validate_time_change_list() const;

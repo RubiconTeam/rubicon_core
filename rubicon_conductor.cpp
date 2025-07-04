@@ -12,8 +12,10 @@ int RubiconConductor::get_time_change_index() const {
 }
 
 void RubiconConductor::set_playing(const bool p_playing) {
-    if (!_validate_time_change_list())
+    if (!_validate_time_change_list()) {
+        playing = false;
         return;
+    }
 
     _time = get_time();
     playing = p_playing;
@@ -28,9 +30,9 @@ void RubiconConductor::set_time(const float p_time) {
     float old_time = _time;
 
     _time = p_time;
+
     _relative_start_time = Time::get_singleton()->get_unix_time_from_system();
     _relative_time_offset = p_time;
-
     _time_changed(_time - old_time);
 }
 
@@ -217,9 +219,17 @@ float RubiconConductor::ms_to_measures(float p_ms_time, const TypedArray<Rubicon
 
 void RubiconConductor::_notification(int p_what) {
     switch (p_what) {
+        case NOTIFICATION_READY: {
+            set_process_internal(true);
+        } break;
         case NOTIFICATION_INTERNAL_PROCESS: {
             if (!playing) 
                 return;
+            
+            if (!_validate_time_change_list()) {
+                set_playing(false);
+                return;
+            }
 
             float cur_time = get_time();
             _time_changed(cur_time - _time);
