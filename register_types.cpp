@@ -16,6 +16,7 @@
 #include "rubicon_song_meta.h"
 #include "rubicon_song.h"
 #include "rubicon_time_change.h"
+#include "rubicon_time_change_array.h"
 
 static RubiconCore *CorePtr;
 
@@ -29,6 +30,7 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	// Rubicon.Core
     GDREGISTER_CLASS(RubiconConductor);
 	GDREGISTER_CLASS(RubiconTimeChange); 
+	GDREGISTER_CLASS(RubiconTimeChangeArray);
 
 	GDREGISTER_CLASS(RubiconCore);
 	CorePtr = memnew(RubiconCore);

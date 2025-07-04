@@ -8,8 +8,30 @@ TypedArray<RubiconTimeChange> RubiconTimeChangeArray::get_data() const {
     return data;
 }
 
-Ref<RubiconTimeChange> RubiconTimeChangeArray::get_time_change_at_ms(const float p_time) const {
+bool RubiconTimeChangeArray::is_valid() const {
+    ERR_FAIL_COND_V_MSG(data.size() == 0, false, "Data needs to have at least one time change!");
+    
+    for (int i = 0; i < data.size(); i++) {
+        Ref<RubiconTimeChange> current = data[i];
+        ERR_FAIL_COND_V_MSG(current.is_null() || !current.is_valid(), false, "One of your time changes is either null or not valid.");
+    }
 
+    return true;
+}
+
+Ref<RubiconTimeChange> RubiconTimeChangeArray::get_time_change_at_ms(const float p_time) const {
+    if (!_validate_data())
+        return Ref<RubiconTimeChange>();
+    
+    for (int t = 0; t < data.size(); t++) {
+        Ref<RubiconTimeChange> current = data[t];
+        if (current->ms_time < p_time)
+            continue;
+
+        return current;
+    }
+
+    return Ref<RubiconTimeChange>(); // ?????????????
 }
 
 Ref<RubiconTimeChange> RubiconTimeChangeArray::get_time_change_at_measure(const float p_measure) const {
@@ -71,8 +93,88 @@ Ref<RubiconTimeChange> RubiconTimeChangeArray::get_time_change_at_step(const flo
     return Ref<RubiconTimeChange>(); // ?????????????
 }
 
-void RubiconTimeChangeArray::get_beat_range_for_time_change(Array p_range) const {
+void RubiconTimeChangeArray::get_ms_range_for_time_change(const int p_index, Array p_range) const {
+    if (!_validate_data())
+        return;
     
+    ERR_FAIL_COND_MSG(p_index < 0, "Index must be >= 0.");
+    ERR_FAIL_COND_MSG(p_index >= data.size(), "Index is out of bounds!");
+
+    p_range.resize(2);
+    p_range[0] = Ref<RubiconTimeChange>(data[p_index])->ms_time;
+    if (p_index == data.size() - 1) {
+        p_range[1] = -1;
+        return;
+    }
+
+    p_range[1] = Ref<RubiconTimeChange>(data[p_index + 1])->ms_time;
+}
+
+void RubiconTimeChangeArray::get_measure_range_for_time_change(const int p_index, Array p_range) const {
+    if (!_validate_data())
+        return;
+    
+    ERR_FAIL_COND_MSG(p_index < 0, "Index must be >= 0.");
+    ERR_FAIL_COND_MSG(p_index >= data.size(), "Index is out of bounds!");
+
+    p_range.resize(2);
+    p_range[0] = Ref<RubiconTimeChange>(data[p_index])->time;
+    if (p_index == data.size() - 1) {
+        p_range[1] = -1;
+        return;
+    }
+
+    p_range[1] = Ref<RubiconTimeChange>(data[p_index + 1])->time;
+}
+
+void RubiconTimeChangeArray::get_beat_range_for_time_change(const int p_index, Array p_range) const {
+    if (!_validate_data())
+        return;
+    
+    ERR_FAIL_COND_MSG(p_index < 0, "Index must be >= 0.");
+    ERR_FAIL_COND_MSG(p_index >= data.size(), "Index is out of bounds!");
+
+    p_range.resize(2);
+
+    int beat_count = 0;
+    for (int i = 0; i < data.size(); i++) {
+        Ref<RubiconTimeChange> current = data[i];
+        
+        if (i == p_index)
+            p_range[0] = beat_count;
+        
+        if (i == p_index + 1) {
+            p_range[1] = beat_count;
+            break;
+        }
+        
+        beat_count += current->time_signature_numerator * (Ref<RubiconTimeChange>(data[i + 1])->time - current->time); 
+    }
+}
+
+void RubiconTimeChangeArray::get_step_range_for_time_change(const int p_index, Array p_range) const {
+    if (!_validate_data())
+        return;
+    
+    ERR_FAIL_COND_MSG(p_index < 0, "Index must be >= 0.");
+    ERR_FAIL_COND_MSG(p_index >= data.size(), "Index is out of bounds!");
+
+    p_range.resize(2);
+
+    int step_count = 0;
+    for (int i = 0; i < data.size(); i++) {
+        Ref<RubiconTimeChange> current = data[i];
+        
+        if (i == p_index)
+            p_range[0] = step_count;
+        
+        if (i == p_index + 1) {
+            p_range[1] = step_count;
+            break;
+        }
+        
+        step_count += current->time_signature_numerator * current->time_signature_denominator * (Ref<RubiconTimeChange>(data[i + 1])->time - current->time);
+    }
 }
 
 bool RubiconTimeChangeArray::_validate_data() const {
@@ -84,4 +186,24 @@ bool RubiconTimeChangeArray::_validate_data() const {
     }
 
     return true;
+}
+
+void RubiconTimeChangeArray::_bind_methods() {
+    // Getters and Setters
+    ClassDB::bind_method(D_METHOD("set_data", "value"), &RubiconTimeChangeArray::set_data);
+    ClassDB::bind_method("get_data", &RubiconTimeChangeArray::get_data);
+    
+    // Properties
+    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "data", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconTimeChange")), "set_data", "get_data");
+
+    // Methods
+    ClassDB::bind_method(D_METHOD("get_time_change_at_ms", "time"), &RubiconTimeChangeArray::get_time_change_at_ms);
+    ClassDB::bind_method(D_METHOD("get_time_change_at_measure", "measure"), &RubiconTimeChangeArray::get_time_change_at_measure);
+    ClassDB::bind_method(D_METHOD("get_time_change_at_beat", "beat"), &RubiconTimeChangeArray::get_time_change_at_beat);
+    ClassDB::bind_method(D_METHOD("get_time_change_at_step", "step"), &RubiconTimeChangeArray::get_time_change_at_step);
+
+    ClassDB::bind_method(D_METHOD("get_ms_range_for_time_change", "index", "range"), &RubiconTimeChangeArray::get_ms_range_for_time_change);
+    ClassDB::bind_method(D_METHOD("get_measure_range_for_time_change", "index", "range"), &RubiconTimeChangeArray::get_measure_range_for_time_change);
+    ClassDB::bind_method(D_METHOD("get_beat_range_for_time_change", "index", "range"), &RubiconTimeChangeArray::get_beat_range_for_time_change);
+    ClassDB::bind_method(D_METHOD("get_step_range_for_time_change", "index", "range"), &RubiconTimeChangeArray::get_step_range_for_time_change);
 }
