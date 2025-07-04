@@ -8,7 +8,7 @@
 #include "core/variant/typed_array.h"
 #include "core/variant/typed_dictionary.h"
 #include "rubicon_row_data.h"
-#include "rubicon_time_change.h"
+#include "../rubicon_time_change.h"
 #include "rubicon_scroll_velocity.h"
 
 template <typename T>

@@ -9,13 +9,13 @@
 #include "chart/rubichart.h"
 #include "chart/rubicon_section_data.h"
 #include "chart/rubicon_scroll_velocity.h"
-#include "chart/rubicon_time_change.h"
 #include "chart/rubicon_chart_data.h"
 #include "modules/rubicon_engine/events/rubicon_event_data.h"
 #include "modules/rubicon_engine/events/rubicon_event_meta.h"
 //#include "meta/rubicon_song_difficulty.h"
 #include "rubicon_song_meta.h"
 #include "rubicon_song.h"
+#include "rubicon_time_change.h"
 
 static RubiconCore *CorePtr;
 
@@ -28,6 +28,7 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 
 	// Rubicon.Core
     GDREGISTER_CLASS(RubiconConductor);
+	GDREGISTER_CLASS(RubiconTimeChange); 
 
 	GDREGISTER_CLASS(RubiconCore);
 	CorePtr = memnew(RubiconCore);
@@ -40,7 +41,6 @@ void initialize_rubicon_core_module(ModuleInitializationLevel p_level) {
 	GDREGISTER_CLASS(RubiconRowData);
 	GDREGISTER_CLASS(RubiconSectionData);
 	GDREGISTER_CLASS(RubiconScrollVelocity);
-	GDREGISTER_CLASS(RubiconTimeChange); 
 	GDREGISTER_CLASS(RubiconChartData);
 	GDREGISTER_CLASS(RubiChart);
 

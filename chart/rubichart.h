@@ -4,7 +4,7 @@
 #include "core/io/resource.h"
 #include "core/variant/typed_array.h"
 #include "rubicon_chart_data.h"
-#include "rubicon_time_change.h"
+#include "../rubicon_time_change.h"
 #include "core/io/resource_loader.h"
 #include "core/io/resource_saver.h"
 

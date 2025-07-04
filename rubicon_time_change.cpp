@@ -1,5 +1,5 @@
 #include "rubicon_time_change.h"
-#include "../rubicon_conductor.h"
+#include "rubicon_conductor.h"
 
 void RubiconTimeChange::set_time(const float p_time) {
     time = p_time;

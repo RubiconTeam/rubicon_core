@@ -4,7 +4,7 @@
 #include "scene/main/node.h"
 #include "core/object/class_db.h"
 #include "core/variant/typed_array.h"
-#include "chart/rubicon_time_change.h"
+#include "rubicon_time_change.h"
 
 template <typename T>
 class TypedArray;
