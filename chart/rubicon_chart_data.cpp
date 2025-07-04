@@ -239,7 +239,7 @@ void RubiconChartData::cleanup_sections() {
     sections.sort_custom(callable_mp_static(&RubiconSectionData::compare_sections_by_measure));
 }
 
-void RubiconChartData::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes) {
+void RubiconChartData::convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes) {
     int s;
     for (s = 0; s < scroll_velocities.size(); s++) {
         Ref<RubiconScrollVelocity> sv = scroll_velocities[s];

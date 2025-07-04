@@ -164,7 +164,7 @@ bool RubiconRowData::is_note_ending(const Ref<RubiconNoteData> p_note) const {
     return ending_notes.has(p_note);
 }
 
-void RubiconRowData::convert_data(const TypedArray<RubiconNoteData> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities) {
+void RubiconRowData::convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities) {
     int i;
     for (i = 0; i < starting_notes.size(); i++) {
         Ref<RubiconNoteData> cur_note = starting_notes[i];

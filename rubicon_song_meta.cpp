@@ -1,5 +1,4 @@
 #include "rubicon_song_meta.h"
-#include "rubicon_conductor.h"
 
 void RubiconSongMeta::set_song_name(const String p_name) {
     name = p_name;
@@ -49,11 +48,11 @@ Ref<RubiconEventMeta> RubiconSongMeta::get_event_meta() const {
     return event_meta;
 }
 
-void RubiconSongMeta::set_time_changes(const TypedArray<RubiconTimeChange> p_time_changes) {
+void RubiconSongMeta::set_time_changes(const Ref<RubiconTimeChangeArray> p_time_changes) {
     time_changes = p_time_changes;
 }
 
-TypedArray<RubiconTimeChange> RubiconSongMeta::get_time_changes() const {
+Ref<RubiconTimeChangeArray> RubiconSongMeta::get_time_changes() const {
     return time_changes;
 }
 
@@ -134,17 +133,6 @@ void RubiconSongMeta::set_playable_charts(const PackedStringArray p_playable_cha
 
 PackedStringArray RubiconSongMeta::get_playable_charts() const {
     return playable_charts;
-}
-
-Ref<RubiconSongMeta> RubiconSongMeta::convert_data() {
-    for (int i = 1; i < time_changes.size(); i++) {
-        Ref<RubiconTimeChange> previous_time_change = time_changes[i-1];
-        Ref<RubiconTimeChange> time_change = time_changes[i];
-
-        time_change->ms_time = previous_time_change->ms_time + RubiconConductor::measure_to_ms(time_change->time - previous_time_change->time, previous_time_change->bpm, time_change->time_signature_numerator);
-    }
-
-    return this;
 }
 
 /*bool RubiconSongMeta::find_index(const Variant &p_a, const Variant &p_b) {
@@ -232,7 +220,7 @@ void RubiconSongMeta::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "vocals", PROPERTY_HINT_RESOURCE_TYPE, "AudioStream"), "set_vocals", "get_vocals");
     //ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "difficulties", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconSongDifficulty")), "set_difficulties", "get_difficulties");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "event_meta", PROPERTY_HINT_RESOURCE_TYPE, "RubiconEventMeta"), "set_event_meta", "get_event_meta");
-    ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "time_changes", PROPERTY_HINT_ARRAY_TYPE, MAKE_RESOURCE_TYPE_HINT("RubiconTimeChange")), "set_time_changes", "get_time_changes");
+    ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "time_changes", PROPERTY_HINT_RESOURCE_TYPE, "RubiconTimeChangeArray"), "set_time_changes", "get_time_changes");
     ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "modules"), "set_modules", "get_modules");
     ADD_PROPERTY(PropertyInfo(Variant::STRING, "ui_style"), "set_ui_style", "get_ui_style");
     /*ADD_PROPERTY(PropertyInfo(Variant::PACKED_STRING_ARRAY, "stages"), "set_stages", "get_stages");

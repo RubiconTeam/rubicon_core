@@ -6,6 +6,7 @@
 #include "core/object/class_db.h"
 #include "core/variant/typed_array.h"
 #include "../rubicon_time_change.h"
+#include "../rubicon_time_change_array.h"
 
 template <typename T>
 class TypedArray;
@@ -29,7 +30,7 @@ public:
     float get_ms_time() const;
     float get_position() const;
 
-    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const Ref<RubiconScrollVelocity> p_previous = Ref<RubiconScrollVelocity>());
+    void convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes, const Ref<RubiconScrollVelocity> p_previous = Ref<RubiconScrollVelocity>());
 
 protected:
     static void _bind_methods();

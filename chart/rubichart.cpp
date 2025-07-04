@@ -35,7 +35,7 @@ TypedArray<RubiconChartData> RubiChart::get_charts() const {
     return charts;
 }
 
-void RubiChart::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes) {
+void RubiChart::convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes) {
     for (int c = 0; c < charts.size(); c++) {
         Ref<RubiconChartData> chart = charts[c];
         chart->convert_data(p_time_changes);

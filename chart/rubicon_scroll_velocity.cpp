@@ -25,13 +25,17 @@ float RubiconScrollVelocity::get_position() const {
     return position;
 }
 
-void RubiconScrollVelocity::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const Ref<RubiconScrollVelocity> p_previous) {
-    Ref<RubiconTimeChange> time_change = p_time_changes.back();
-    for (int i = 0; i < p_time_changes.size(); i++) {
-        Ref<RubiconTimeChange> current_time_change = p_time_changes[i];
+void RubiconScrollVelocity::convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes, const Ref<RubiconScrollVelocity> p_previous) {
+    ERR_FAIL_COND_MSG(p_time_changes.is_null() || !p_time_changes.is_valid(), "The provided time change array is null or invalid.");
+    if (!p_time_changes->is_valid())
+        return;
+    
+    Ref<RubiconTimeChange> time_change = p_time_changes->data.back();
+    for (int i = 0; i < p_time_changes->data.size(); i++) {
+        Ref<RubiconTimeChange> current_time_change = p_time_changes->data[i];
 
         if (current_time_change->time > time) {
-            Ref<RubiconTimeChange> previous_time_change = p_time_changes[i - 1];
+            Ref<RubiconTimeChange> previous_time_change = p_time_changes->data[i - 1];
 
             time_change = previous_time_change;
             break;

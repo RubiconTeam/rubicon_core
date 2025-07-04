@@ -8,6 +8,7 @@
 #include "rubicon_note_data.h"
 #include "rubicon_section_data.h"
 #include "rubicon_scroll_velocity.h"
+#include "../rubicon_time_change_array.h"
 
 template <typename T>
 class TypedArray;
@@ -59,7 +60,7 @@ public:
     bool is_note_starting(const Ref<RubiconNoteData> p_note) const;
     bool is_note_ending(const Ref<RubiconNoteData> p_note) const;
     
-    void convert_data(const TypedArray<RubiconNoteData> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities);
+    void convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities);
 
     static bool is_of_value(const Variant &p_row, const uint8_t p_offset, const uint8_t p_quant);
     static bool compare_rows(const Variant &p_a, const Variant &p_b);

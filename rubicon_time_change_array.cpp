@@ -1,4 +1,5 @@
 #include "rubicon_time_change_array.h"
+#include "rubicon_conductor.h"
 
 void RubiconTimeChangeArray::set_data(const TypedArray<RubiconTimeChange> p_value) {
     data = p_value;
@@ -9,7 +10,7 @@ TypedArray<RubiconTimeChange> RubiconTimeChangeArray::get_data() const {
 }
 
 bool RubiconTimeChangeArray::is_valid() const {
-    ERR_FAIL_COND_V_MSG(data.size() == 0, false, "Data needs to have at least one time change!");
+    ERR_FAIL_COND_V_MSG(data.is_empty(), false, "Data needs to have at least one time change!");
     
     for (int i = 0; i < data.size(); i++) {
         Ref<RubiconTimeChange> current = data[i];
@@ -17,6 +18,15 @@ bool RubiconTimeChangeArray::is_valid() const {
     }
 
     return true;
+}
+
+void RubiconTimeChangeArray::convert_data() {
+    for (int i = 1; i < data.size(); i++) {
+        Ref<RubiconTimeChange> previous_time_change = data[i-1];
+        Ref<RubiconTimeChange> time_change = data[i];
+
+        time_change->ms_time = previous_time_change->ms_time + RubiconConductor::measure_to_ms(time_change->time - previous_time_change->time, previous_time_change->bpm, time_change->time_signature_numerator);
+    }
 }
 
 Ref<RubiconTimeChange> RubiconTimeChangeArray::get_time_change_at_ms(const float p_time) const {

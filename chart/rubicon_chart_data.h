@@ -8,6 +8,7 @@
 #include "rubicon_scroll_velocity.h"
 #include "rubicon_section_data.h"
 #include "rubicon_note_data.h"
+#include "../rubicon_time_change_array.h"
 
 template <typename T>
 class TypedArray;
@@ -58,7 +59,7 @@ public:
     Ref<RubiconSectionData> get_section_at_measure(const int p_measure) const;
 
     void cleanup_sections();
-    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes);
+    void convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes);
 
     static void measure_offset_to_offset_and_quant(const float p_measure_time, uint8_t &p_offset, uint8_t &p_quant);
 

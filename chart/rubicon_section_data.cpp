@@ -17,7 +17,7 @@ TypedArray<RubiconRowData> RubiconSectionData::get_rows() const {
     return rows;
 }
 
-void RubiconSectionData::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities) {
+void RubiconSectionData::convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities) {
     for (int r = 0; r < rows.size(); r++) {
         Ref<RubiconRowData> cur = rows[r];
         cur->section = this;

@@ -7,6 +7,7 @@
 #include "../rubicon_time_change.h"
 #include "core/io/resource_loader.h"
 #include "core/io/resource_saver.h"
+#include "../rubicon_time_change_array.h"
 
 template <typename T>
 class TypedArray;
@@ -34,7 +35,7 @@ public:
     void set_charts(const TypedArray<RubiconChartData> &p_value);
     TypedArray<RubiconChartData> get_charts() const;
 
-    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes);
+    void convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes);
     PackedStringArray get_all_notetypes() const;
 
 protected:

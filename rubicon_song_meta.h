@@ -7,6 +7,7 @@
 #include "modules/rubicon_engine/events/rubicon_event_meta.h"
 #include "core/config/project_settings.h"
 //#include "rubicon_character_meta.h"
+#include "rubicon_time_change_array.h"
 
 class AudioStream;
 
@@ -23,7 +24,7 @@ public:
     //TypedArray<RubiconSongDifficulty> difficulties;
     Ref<RubiconEventMeta> event_meta = nullptr;
 
-    TypedArray<RubiconTimeChange> time_changes;
+    Ref<RubiconTimeChangeArray> time_changes;
     PackedStringArray modules;
 
     String ui_style = ProjectSettings::get_singleton()->get_setting("rubicon/default_ruleset", "default");
@@ -66,8 +67,8 @@ public:
     void set_event_meta(const Ref<RubiconEventMeta> p_event_meta);
     Ref<RubiconEventMeta> get_event_meta() const;
 
-    void set_time_changes(const TypedArray<RubiconTimeChange> p_time_changes);
-    TypedArray<RubiconTimeChange> get_time_changes() const;
+    void set_time_changes(const Ref<RubiconTimeChangeArray> p_time_changes);
+    Ref<RubiconTimeChangeArray> get_time_changes() const;
 
     void set_modules(const PackedStringArray p_modules);
     PackedStringArray get_modules() const;

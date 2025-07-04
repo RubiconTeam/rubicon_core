@@ -9,6 +9,7 @@
 #include "core/variant/typed_dictionary.h"
 #include "rubicon_row_data.h"
 #include "../rubicon_time_change.h"
+#include "../rubicon_time_change_array.h"
 #include "rubicon_scroll_velocity.h"
 
 template <typename T>
@@ -74,7 +75,7 @@ public:
     void set_internal_counts_towards_score(const bool p_value);
     bool get_internal_counts_towards_score() const;
 
-    void convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocity);
+    void convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocity);
 
     static bool compare_notes_by_time(const Variant &p_a, const Variant &p_b);
     static bool compare_notes_by_lane(const Variant &p_a, const Variant &p_b);

@@ -97,7 +97,11 @@ bool RubiconNoteData::get_internal_counts_towards_score() const {
     return internal_counts_towards_score;
 }
 
-void RubiconNoteData::convert_data(const TypedArray<RubiconTimeChange> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities) {
+void RubiconNoteData::convert_data(const Ref<RubiconTimeChangeArray> &p_time_changes, const TypedArray<RubiconScrollVelocity> &p_velocities) {
+    ERR_FAIL_COND_MSG(p_time_changes.is_null() || !p_time_changes.is_valid(), "The provided time change array is null or invalid.");
+    if (!p_time_changes->is_valid())
+        return;
+    
     if (!starting_row.is_null()) {
         measure_time = starting_row->section->measure + (float(starting_row->offset) / float(starting_row->quant));
         measure_length = !ending_row.is_null() ? (ending_row->section->measure + (float(ending_row->offset) / float(ending_row->quant))) - measure_time : 0.0f;
@@ -105,11 +109,11 @@ void RubiconNoteData::convert_data(const TypedArray<RubiconTimeChange> &p_time_c
     
     int i = 0;
 
-    Ref<RubiconTimeChange> starting_change = p_time_changes.back();
-    for (i = 0; i < p_time_changes.size(); i++) {
-        Ref<RubiconTimeChange> cur_change = p_time_changes[i];
+    Ref<RubiconTimeChange> starting_change = p_time_changes->data.back();
+    for (i = 0; i < p_time_changes->data.size(); i++) {
+        Ref<RubiconTimeChange> cur_change = p_time_changes->data[i];
         if (cur_change->time > measure_time) {
-            starting_change = p_time_changes[i - 1];
+            starting_change = p_time_changes->data[i - 1];
             break;
         }
     }
