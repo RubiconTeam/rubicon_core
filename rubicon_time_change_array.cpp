@@ -103,6 +103,140 @@ Ref<RubiconTimeChange> RubiconTimeChangeArray::get_time_change_at_step(const flo
     return Ref<RubiconTimeChange>(); // ?????????????
 }
 
+float RubiconTimeChangeArray::get_ms_for_measure(const float p_measure) const {
+    if (!_validate_data())
+        return 0.0;
+    
+    for (int i = 0; i < data.size(); i++) {
+        Ref<RubiconTimeChange> current = data[i];
+        
+        if (current->time >= p_measure) 
+            return current->ms_time + RubiconConductor::measure_to_ms(p_measure - current->time, current->bpm, current->time_signature_numerator);
+    }
+
+    return 0.0;
+}
+
+float RubiconTimeChangeArray::get_ms_for_beat(const float p_beat) const {
+    return get_ms_for_measure(get_measure_for_beat(p_beat));
+}
+
+float RubiconTimeChangeArray::get_ms_for_step(const float p_step) const {
+    return get_ms_for_measure(get_measure_for_step(p_step));
+}
+
+float RubiconTimeChangeArray::get_measure_for_ms(const float p_time) const {
+    if (!_validate_data())
+        return 0.0;
+    
+    for (int i = 0; i < data.size(); i++) {
+        Ref<RubiconTimeChange> current = data[i];
+
+        if (current->ms_time >= p_time) 
+            return current->time + ((p_time - current->ms_time) / RubiconConductor::measure_to_ms(1.0, current->bpm, current->time_signature_numerator));
+    }
+
+    return 0.0;
+}
+
+float RubiconTimeChangeArray::get_measure_for_beat(const float p_beat) const {
+    if (!_validate_data())
+        return 0.0;
+    
+    float beat_count = 0.0;
+    for (int i = 1; i < data.size(); i++) {
+        Ref<RubiconTimeChange> current = data[i];
+        Ref<RubiconTimeChange> prev = data[i - 1];
+
+        float beat_length = RubiconConductor::measure_to_beats(current->time - prev->time, prev->time_signature_numerator);
+        if (beat_count + beat_length > p_beat) 
+            return prev->time + RubiconConductor::beats_to_measures(p_beat - beat_count, prev->time_signature_numerator);
+
+        beat_count += beat_length;
+    }
+
+    return 0.0;
+}
+
+float RubiconTimeChangeArray::get_measure_for_step(const float p_step) const {
+    if (!_validate_data())
+        return 0.0;
+    
+    float step_count = 0.0;
+    for (int i = 1; i < data.size(); i++) {
+        Ref<RubiconTimeChange> current = data[i];
+        Ref<RubiconTimeChange> prev = data[i - 1];
+
+        float step_length = RubiconConductor::measure_to_steps(current->time - prev->time, prev->time_signature_numerator, prev->time_signature_denominator);
+        if (step_count + step_length > p_step) 
+            return prev->time + RubiconConductor::steps_to_measures(p_step - step_count, prev->time_signature_numerator, prev->time_signature_denominator);
+
+        step_count += step_length;
+    }
+
+    return 0.0;
+}
+
+float RubiconTimeChangeArray::get_beat_for_ms(const float p_time) const {
+    return get_beat_for_measure(get_measure_for_ms(p_time));
+}
+
+float RubiconTimeChangeArray::get_beat_for_measure(const float p_measure) const {
+    if (!_validate_data())
+        return 0.0;
+    
+    float beat_count = 0.0;
+    float measure_count = 0.0;
+    for (int i = 1; i < data.size(); i++) {
+        Ref<RubiconTimeChange> current = data[i];
+        Ref<RubiconTimeChange> prev = data[i - 1];
+
+        float measure_length = current->time - prev->time;
+        float beat_length = RubiconConductor::measure_to_beats(current->time - prev->time, prev->time_signature_numerator);
+        if (measure_count + measure_length > p_measure) 
+            return beat_count + RubiconConductor::measure_to_beats(p_measure - prev->time, prev->time_signature_numerator);
+
+        beat_count += beat_length;
+        measure_count += measure_length;
+    }
+
+    return 0.0;
+}
+
+float RubiconTimeChangeArray::get_beat_for_step(const float p_step) const {
+    return get_beat_for_measure(get_measure_for_step(p_step));
+}
+
+float RubiconTimeChangeArray::get_step_for_ms(const float p_time) const {
+    return get_step_for_measure(get_measure_for_ms(p_time));
+}
+
+float RubiconTimeChangeArray::get_step_for_measure(const float p_measure) const {
+    if (!_validate_data())
+        return 0.0;
+    
+    float step_count = 0.0;
+    float measure_count = 0.0;
+    for (int i = 1; i < data.size(); i++) {
+        Ref<RubiconTimeChange> current = data[i];
+        Ref<RubiconTimeChange> prev = data[i - 1];
+
+        float measure_length = current->time - prev->time;
+        float step_length = RubiconConductor::measure_to_steps(current->time - prev->time, prev->time_signature_numerator, prev->time_signature_denominator);
+        if (measure_count + measure_length > p_measure) 
+            return step_count + RubiconConductor::measure_to_steps(p_measure - prev->time, prev->time_signature_numerator, prev->time_signature_denominator);
+
+        step_count += step_length;
+        measure_count += measure_length;
+    }
+
+    return 0.0;
+}
+
+float RubiconTimeChangeArray::get_step_for_beat(const float p_beat) const {
+    return get_step_for_measure(get_measure_for_beat(p_beat));
+}
+
 void RubiconTimeChangeArray::get_ms_range_for_time_change(const int p_index, Array p_range) const {
     if (!_validate_data())
         return;
@@ -211,6 +345,22 @@ void RubiconTimeChangeArray::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_time_change_at_measure", "measure"), &RubiconTimeChangeArray::get_time_change_at_measure);
     ClassDB::bind_method(D_METHOD("get_time_change_at_beat", "beat"), &RubiconTimeChangeArray::get_time_change_at_beat);
     ClassDB::bind_method(D_METHOD("get_time_change_at_step", "step"), &RubiconTimeChangeArray::get_time_change_at_step);
+
+    ClassDB::bind_method(D_METHOD("get_ms_for_measure", "measure"), &RubiconTimeChangeArray::get_ms_for_measure);
+    ClassDB::bind_method(D_METHOD("get_ms_for_beat", "beat"), &RubiconTimeChangeArray::get_ms_for_beat);
+    ClassDB::bind_method(D_METHOD("get_ms_for_step", "step"), &RubiconTimeChangeArray::get_ms_for_step);
+
+    ClassDB::bind_method(D_METHOD("get_measure_for_ms", "time"), &RubiconTimeChangeArray::get_measure_for_ms);
+    ClassDB::bind_method(D_METHOD("get_measure_for_beat", "beat"), &RubiconTimeChangeArray::get_measure_for_beat);
+    ClassDB::bind_method(D_METHOD("get_measure_for_step", "step"), &RubiconTimeChangeArray::get_measure_for_step);
+
+    ClassDB::bind_method(D_METHOD("get_beat_for_ms", "time"), &RubiconTimeChangeArray::get_beat_for_ms);
+    ClassDB::bind_method(D_METHOD("get_beat_for_measure", "measure"), &RubiconTimeChangeArray::get_beat_for_measure);
+    ClassDB::bind_method(D_METHOD("get_beat_for_step", "step"), &RubiconTimeChangeArray::get_beat_for_step);
+
+    ClassDB::bind_method(D_METHOD("get_step_for_ms", "time"), &RubiconTimeChangeArray::get_step_for_ms);
+    ClassDB::bind_method(D_METHOD("get_step_for_measure", "measure"), &RubiconTimeChangeArray::get_step_for_measure);
+    ClassDB::bind_method(D_METHOD("get_step_for_beat", "beat"), &RubiconTimeChangeArray::get_step_for_beat);
 
     ClassDB::bind_method(D_METHOD("get_ms_range_for_time_change", "index", "range"), &RubiconTimeChangeArray::get_ms_range_for_time_change);
     ClassDB::bind_method(D_METHOD("get_measure_range_for_time_change", "index", "range"), &RubiconTimeChangeArray::get_measure_range_for_time_change);

@@ -25,6 +25,22 @@ public:
     Ref<RubiconTimeChange> get_time_change_at_measure(const float p_measure) const;
     Ref<RubiconTimeChange> get_time_change_at_beat(const float p_beat) const;
     Ref<RubiconTimeChange> get_time_change_at_step(const float p_step) const;
+
+    float get_ms_for_measure(const float p_measure) const;
+    float get_ms_for_beat(const float p_beat) const;
+    float get_ms_for_step(const float p_step) const;
+    
+    float get_measure_for_ms(const float p_time) const;
+    float get_measure_for_beat(const float p_beat) const;
+    float get_measure_for_step(const float p_step) const;
+
+    float get_beat_for_ms(const float p_time) const;
+    float get_beat_for_measure(const float p_measure) const;
+    float get_beat_for_step(const float p_step) const;
+    
+    float get_step_for_ms(const float p_time) const;
+    float get_step_for_measure(const float p_measure) const;
+    float get_step_for_beat(const float p_beat) const;
     
     void get_ms_range_for_time_change(const int p_index, Array p_range) const;
     void get_measure_range_for_time_change(const int p_index, Array p_range) const;
