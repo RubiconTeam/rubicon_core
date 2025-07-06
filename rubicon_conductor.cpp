@@ -66,6 +66,14 @@ void RubiconConductor::reset() {
     stop();
 }
 
+void RubiconConductor::set_current_step(const float p_value) {
+    if (!_validate_time_change_array())
+        return;
+    
+    time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_step(p_value));
+    
+}
+
 float RubiconConductor::get_current_step() {
     if (!_validate_time_change_array())
         return 0.0f;
@@ -205,25 +213,6 @@ float RubiconConductor::steps_to_measures(float p_steps,float p_time_signature_n
     return p_steps / (p_time_signature_numerator * p_time_signature_denominator);
 }
 
-float RubiconConductor::ms_to_measures(float p_ms_time, const Ref<RubiconTimeChangeArray> &p_time_changes)  {
-    ERR_FAIL_COND_V_MSG(p_time_changes.is_null() || !p_time_changes.is_valid(), 0.0f, "The provided time change array is null or invalid.");
-    if (!p_time_changes->is_valid())
-        return 0.0;
-    
-    Ref<RubiconTimeChange> time_change = p_time_changes->data.back();
-    for (int i = 1; i < p_time_changes->data.size(); i++) {
-        Ref<RubiconTimeChange> cur_time_change = p_time_changes->data[i];
-        if (cur_time_change->ms_time > p_ms_time) {
-            time_change = p_time_changes->data[i - 1];
-            break;
-        }
-    }
-
-    float measure_value = measure_to_ms(1, time_change->bpm, time_change->time_signature_numerator);
-    float offset = p_ms_time - time_change->ms_time;
-    return time_change->time + (offset / measure_value);
-}
-
 void RubiconConductor::_notification(int p_what) {
     switch (p_what) {
         case NOTIFICATION_READY: {
@@ -355,7 +344,6 @@ void RubiconConductor::_bind_methods() {
     ClassDB::bind_static_method("RubiconConductor", D_METHOD("beats_to_steps", "beats", "time_signature_denominator"), &RubiconConductor::beats_to_steps);
     ClassDB::bind_static_method("RubiconConductor", D_METHOD("beats_to_measures", "beats", "time_signature_numerator"), &RubiconConductor::beats_to_measures);
     ClassDB::bind_static_method("RubiconConductor", D_METHOD("steps_to_measures", "steps", "time_signature_numerator", "time_signature_denominator"), &RubiconConductor::steps_to_measures);
-    ClassDB::bind_static_method("RubiconConductor", D_METHOD("ms_to_measures", "ms_time", "time_changes"), &RubiconConductor::ms_to_measures);
 
     // Signals
     ADD_SIGNAL(MethodInfo("beat_hit", PropertyInfo(Variant::INT, "beat")));

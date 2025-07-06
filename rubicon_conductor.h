@@ -39,8 +39,13 @@ public:
 
     void reset();
 
+    void set_current_step(const float p_value);
     float get_current_step();
+
+    void set_current_beat(const float p_value);
     float get_current_beat();
+
+    void set_current_measure(const float p_value);
     float get_current_measure();
 
     // Utility functions
@@ -53,7 +58,6 @@ public:
     static float beats_to_steps(float p_beats, float p_time_signature_denominator);
     static float beats_to_measures(float p_beats, float p_time_signature_numerator);
     static float steps_to_measures(float p_steps, float p_time_signature_numerator, float p_time_signature_denominator);
-    static float ms_to_measures(float p_ms_time, const Ref<RubiconTimeChangeArray> &p_time_changes);
 
 protected:
     void _notification(int p_what);
