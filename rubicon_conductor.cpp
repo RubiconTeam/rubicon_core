@@ -3,6 +3,8 @@
 #include "core/variant/callable.h"
 #include "core/os/time.h"
 
+// TODO: SOMEHOW INVOKE convert_data AS SOON AS TIME CHANGE ARRAY IS MODIFIED !!!
+
 void RubiconConductor::set_time_change_index(const int p_time_change_index) {
     time_change_index = p_time_change_index;
 }
@@ -71,7 +73,7 @@ void RubiconConductor::set_current_step(const float p_value) {
         return;
     
     time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_step(p_value));
-    
+    set_time(_time_change_array->get_ms_for_step(p_value) / 1000.0f);
 }
 
 float RubiconConductor::get_current_step() {
@@ -91,6 +93,14 @@ float RubiconConductor::get_current_step() {
     return _cached_step;
 }
 
+void RubiconConductor::set_current_beat(const float p_value) {
+    if (!_validate_time_change_array())
+        return;
+    
+    time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_beat(p_value));
+    set_time(_time_change_array->get_ms_for_beat(p_value) / 1000.0f);
+}
+
 float RubiconConductor::get_current_beat() {
     if (!_validate_time_change_array())
         return 0.0f;
@@ -106,6 +116,14 @@ float RubiconConductor::get_current_beat() {
     _cached_beat_time = time;
     _cached_beat = (time - time_change->ms_time / 1000.0f) / (60.0f / time_change->bpm) + time_change->time * time_change->time_signature_numerator;
     return _cached_beat;
+}
+
+void RubiconConductor::set_current_measure(const float p_value) {
+    if (!_validate_time_change_array())
+        return;
+    
+    time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_measure(p_value));
+    set_time(_time_change_array->get_ms_for_measure(p_value) / 1000.0f);
 }
 
 float RubiconConductor::get_current_measure() {
@@ -241,62 +259,8 @@ void RubiconConductor::_time_changed(float delta) {
     
     if (!_validate_time_change_array())
         return;
-    
-    int i;
-    int cur_measure = int32_t(Math::floor(get_current_measure()));
-    int cur_beat = int32_t(Math::floor(get_current_beat()));
-    int cur_step = int32_t(Math::floor(get_current_step()));
-    if (sign == 1) { // Going forward
-        while (time_change_index < _time_change_array->data.size() - 1) {
-            Ref<RubiconTimeChange> next_time_change = _time_change_array->data[time_change_index + 1];
-            if (next_time_change->ms_time / 1000.0f > get_time())
-                break;
-                    
-            time_change_index++; 
-                
-            emit_signal(SNAME("time_change_reached"), next_time_change);
-        }
 
-        if (cur_measure != _last_measure)
-            for (i = _last_measure + 1; i <= cur_measure; i++)
-                emit_signal(SNAME("measure_hit"), i);
-    
-        if (cur_beat != _last_beat)
-            for (i = _last_beat + 1; i <= cur_beat; i++)
-                emit_signal(SNAME("beat_hit"), i);
-
-        if (cur_step != _last_step)
-            for (i = _last_step + 1; i <= cur_step; i++)
-                emit_signal(SNAME("step_hit"), i);
-    }
-
-    if (sign == -1) { // Going backward
-        while (time_change_index > 0) {
-            Ref<RubiconTimeChange> prev_time_change = _time_change_array->data[time_change_index - 1];
-            if (prev_time_change->ms_time / 1000.0f < get_time())
-                break;
-            
-            time_change_index--;
-                
-            emit_signal(SNAME("time_change_reached"), prev_time_change);
-        }
-
-        if (cur_measure != _last_measure)
-            for (i = _last_measure - 1; i >= cur_measure; i--)
-                emit_signal(SNAME("measure_hit"), i);
-    
-        if (cur_beat != _last_beat)
-            for (i = _last_beat - 1; i >= cur_beat; i--)
-                emit_signal(SNAME("beat_hit"), i);
-
-        if (cur_step != _last_step)
-            for (i = _last_step - 1; i >= cur_step; i--)
-                emit_signal(SNAME("step_hit"), i);
-    }
-
-    _last_measure = cur_measure;
-    _last_beat = cur_beat;
-    _last_step = cur_step;
+    time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_measure(get_current_measure()));
 }
 
 bool RubiconConductor::_validate_time_change_array() const {
@@ -315,6 +279,15 @@ void RubiconConductor::_bind_methods() {
     ClassDB::bind_method(D_METHOD("set_time_change_array", "time_changes"), &RubiconConductor::set_time_change_array);
     ClassDB::bind_method("get_time_change_array", &RubiconConductor::get_time_change_array);
 
+    ClassDB::bind_method(D_METHOD("set_current_step", "value"), &RubiconConductor::set_current_step);
+    ClassDB::bind_method("get_current_step", &RubiconConductor::get_current_step);
+
+    ClassDB::bind_method(D_METHOD("set_current_beat", "value"), &RubiconConductor::set_current_beat);
+    ClassDB::bind_method("get_current_beat", &RubiconConductor::get_current_beat);
+    
+    ClassDB::bind_method(D_METHOD("set_current_measure", "value"), &RubiconConductor::set_current_measure);
+    ClassDB::bind_method("get_current_measure", &RubiconConductor::get_current_measure);
+
     // Properties
     ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "time"), "set_time", "get_time");
     ADD_PROPERTY(PropertyInfo(Variant::BOOL, "playing", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_playing", "get_playing");
@@ -323,6 +296,11 @@ void RubiconConductor::_bind_methods() {
     ADD_PROPERTY(PropertyInfo(Variant::INT, "time_change_index"), "set_time_change_index", "get_time_change_index");
     ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "time_change_array", PROPERTY_HINT_RESOURCE_TYPE, "RubiconTimeChangeArray"), "set_time_change_array", "get_time_change_array");
 
+    ADD_GROUP("Current", "current_");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "current_measure", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_current_measure", "get_current_measure");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "current_beat", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_current_beat", "get_current_beat");
+    ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "current_step", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_EDITOR), "set_current_step", "get_current_step");
+
     // Methods
     ClassDB::bind_method(D_METHOD("play", "time"), &RubiconConductor::play);
     ClassDB::bind_method("stop", &RubiconConductor::stop);
@@ -330,10 +308,6 @@ void RubiconConductor::_bind_methods() {
     ClassDB::bind_method("get_current_time_change", &RubiconConductor::get_current_time_change);
 
     ClassDB::bind_method("reset", &RubiconConductor::reset);
-
-    ClassDB::bind_method("get_current_step", &RubiconConductor::get_current_step);
-    ClassDB::bind_method("get_current_beat", &RubiconConductor::get_current_beat);
-    ClassDB::bind_method("get_current_measure", &RubiconConductor::get_current_measure);
 
     // Utility functins
     ClassDB::bind_static_method("RubiconConductor", D_METHOD("measures_to_ms", "measure", "bpm", "ime_signature_numerator"), &RubiconConductor::measure_to_ms);
