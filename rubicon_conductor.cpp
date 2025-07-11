@@ -3,8 +3,6 @@
 #include "core/variant/callable.h"
 #include "core/os/time.h"
 
-// TODO: SOMEHOW INVOKE convert_data AS SOON AS TIME CHANGE ARRAY IS MODIFIED !!!
-
 void RubiconConductor::set_time_change_index(const int p_time_change_index) {
     time_change_index = p_time_change_index;
 }
@@ -14,7 +12,7 @@ int RubiconConductor::get_time_change_index() const {
 }
 
 void RubiconConductor::set_playing(const bool p_playing) {
-    if (!_validate_time_change_array()) {
+    if (!_validate_time_change_array(true)) {
         playing = false;
         return;
     }
@@ -69,7 +67,7 @@ void RubiconConductor::reset() {
 }
 
 void RubiconConductor::set_current_step(const float p_value) {
-    if (!_validate_time_change_array())
+    if (!_validate_time_change_array(true))
         return;
     
     time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_step(p_value));
@@ -77,7 +75,7 @@ void RubiconConductor::set_current_step(const float p_value) {
 }
 
 float RubiconConductor::get_current_step() {
-    if (!_validate_time_change_array())
+    if (!_validate_time_change_array(false))
         return 0.0f;
 
     float time = get_time();
@@ -94,7 +92,7 @@ float RubiconConductor::get_current_step() {
 }
 
 void RubiconConductor::set_current_beat(const float p_value) {
-    if (!_validate_time_change_array())
+    if (!_validate_time_change_array(true))
         return;
     
     time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_beat(p_value));
@@ -102,7 +100,7 @@ void RubiconConductor::set_current_beat(const float p_value) {
 }
 
 float RubiconConductor::get_current_beat() {
-    if (!_validate_time_change_array())
+    if (!_validate_time_change_array(false))
         return 0.0f;
 
     float time = get_time();
@@ -119,7 +117,7 @@ float RubiconConductor::get_current_beat() {
 }
 
 void RubiconConductor::set_current_measure(const float p_value) {
-    if (!_validate_time_change_array())
+    if (!_validate_time_change_array(true))
         return;
     
     time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_measure(p_value));
@@ -127,7 +125,7 @@ void RubiconConductor::set_current_measure(const float p_value) {
 }
 
 float RubiconConductor::get_current_measure() {
-    if (!_validate_time_change_array())
+    if (!_validate_time_change_array(false))
         return 0.0f;
 
     float time = get_time();
@@ -144,7 +142,7 @@ float RubiconConductor::get_current_measure() {
 }
 
 Ref<RubiconTimeChange> RubiconConductor::get_current_time_change() {
-    if (!_validate_time_change_array())
+    if (!_validate_time_change_array(true))
         return Ref<RubiconTimeChange>();
 
     return _time_change_array->data[time_change_index];
@@ -240,32 +238,26 @@ void RubiconConductor::_notification(int p_what) {
             if (!playing) 
                 return;
             
-            if (!_validate_time_change_array()) {
+            if (!_validate_time_change_array(true)) {
                 set_playing(false);
                 return;
             }
 
-            float cur_time = get_time();
-            _time_changed(cur_time - _time);
-            _time = cur_time;
+            time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_measure(get_current_measure()));
+            _time = get_time();
         } break;
     }
 }
 
-void RubiconConductor::_time_changed(float delta) {
-    int sign = SIGN(delta);
-    if (sign == 0)
-        return;
+bool RubiconConductor::_validate_time_change_array(const bool p_error) const {
+    if (_time_change_array.is_null() || !_time_change_array.is_valid()) {
+        if (p_error)
+            ERR_FAIL_V_MSG(false, "Time change array object is null or not valid");
+        
+        return false;
+    }
     
-    if (!_validate_time_change_array())
-        return;
-
-    time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_measure(get_current_measure()));
-}
-
-bool RubiconConductor::_validate_time_change_array() const {
-    ERR_FAIL_COND_V_MSG(_time_change_array.is_null() || !_time_change_array.is_valid(), false, "Time change array object is null or not valid");
-    return _time_change_array->is_valid();
+    return _time_change_array->is_valid(p_error);
 }
 
 void RubiconConductor::_bind_methods() {

@@ -9,12 +9,22 @@ TypedArray<RubiconTimeChange> RubiconTimeChangeArray::get_data() const {
     return data;
 }
 
-bool RubiconTimeChangeArray::is_valid() const {
-    ERR_FAIL_COND_V_MSG(data.is_empty(), false, "Data needs to have at least one time change!");
-    
+bool RubiconTimeChangeArray::is_valid(const bool p_error) const {
+    if (data.is_empty()) {
+        if (p_error)
+            ERR_FAIL_V_MSG(false, "Data needs to have at least one time change!");
+        
+        return false;
+    }
+
     for (int i = 0; i < data.size(); i++) {
         Ref<RubiconTimeChange> current = data[i];
-        ERR_FAIL_COND_V_MSG(current.is_null() || !current.is_valid(), false, "One of your time changes is either null or not valid.");
+        if (current.is_null() || !current.is_valid()) {
+            if (p_error)
+                ERR_FAIL_V_MSG(false, "One of your time changes is either null or not valid.");
+            
+            return false;
+        }
     }
 
     return true;
@@ -43,12 +53,12 @@ Ref<RubiconTimeChange> RubiconTimeChangeArray::get_time_change_at_measure(const 
     if (data.size() == 1)
         return data.front();
     
-    for (int t = 0; t < data.size(); t++) {
+    for (int t = 1; t < data.size(); t++) {
         Ref<RubiconTimeChange> current = data[t];
-        if (p_measure < current->time)
+        if (current->time < p_measure)
             continue;
         
-        return current;
+        return data[t - 1];
     }
 
     return data.back();

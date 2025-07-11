@@ -18,7 +18,7 @@ public:
     void set_data(const TypedArray<RubiconTimeChange> p_value);
     TypedArray<RubiconTimeChange> get_data() const;
 
-    bool is_valid() const;
+    bool is_valid(const bool p_error = false) const;
     void convert_data();
 
     Ref<RubiconTimeChange> get_time_change_at_ms(const float p_time) const;

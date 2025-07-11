@@ -84,8 +84,7 @@ private:
 	int _last_step = 0;
 	int _last_measure = 0;
 
-    void _time_changed(float delta);
-    bool _validate_time_change_array() const;
+    bool _validate_time_change_array(const bool p_error) const;
 };
 
 #endif // RUBICON_CONDUCTOR_H
