@@ -33,6 +33,7 @@ void RubiconConductor::set_time(const float p_time) {
 
     _relative_start_time = Time::get_singleton()->get_unix_time_from_system();
     _relative_time_offset = p_time;
+    time_change_index = _time_change_array->data.find(_time_change_array->get_time_change_at_measure(get_current_measure()));
 }
 
 float RubiconConductor::get_time() const {
